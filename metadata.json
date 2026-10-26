@@ -1,0 +1,6 @@
+{
+  "name": "REINmonitor Treasury - Realtime Gold Price Dashboard",
+  "description": "Platform pantau harga emas real-time modern, akurat, dan terpercaya dengan indikator teknikal, kalender berita XAU/USD, kalkulator emas, dan sinyal pergerakan pasar.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

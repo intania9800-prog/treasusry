@@ -1,0 +1,2379 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>REINmonitor TREASURY</title>
+  <link rel="icon" type="image/png" href="/assets/aistudio/rein_logo_transparent.png">
+  <link rel="apple-touch-icon" href="/assets/aistudio/rein_logo_transparent.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@600;700;800;900&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #0f1217;
+      --card-bg: linear-gradient(180deg, #202735 0%, #161b24 100%);
+      --card-border-color: #2a3446;
+      --card-border-width: 1px;
+      --card-scale: 1;
+      --font-price-scale: 1;
+      --font-nominal-scale: 1;
+      --text: #ffffff;
+      --text-muted: #9aa1ad;
+      --panel-bg: #151a24;
+      --panel-border: #242c3d;
+      --chart-border: #1f2738;
+      --history-bg: #121620;
+      --history-row-border: #1d2535;
+      --dir-green: #22c55e;
+      --dir-red: #ef4444;
+    }
+
+    body.light {
+      --bg: #f3f5f8;
+      --card-bg: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+      --card-border-color: #cbd5e1;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --panel-bg: #ffffff;
+      --panel-border: #cbd5e1;
+      --chart-border: #cbd5e1;
+      --history-bg: #ffffff;
+      --history-row-border: #e2e8f0;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      transition: background 0.25s ease, color 0.25s ease;
+    }
+
+    /* COMPACT CENTERED DASHBOARD (MATCHING IMAGE SCALE) */
+    .dashboard-layout {
+      width: 100%;
+      max-width: 1020px;
+      margin: 0 auto;
+      padding: 14px 14px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* ==================== 1. TOP HEADER ==================== */
+    .header-section {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 2px 0 4px;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    /* Logo with transparent background */
+    .brand-logo-clean {
+      height: 52px;
+      width: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 8px rgba(245, 158, 11, 0.4));
+      display: block;
+    }
+
+    .header-date-title {
+      font-size: 23px;
+      font-weight: 900;
+      color: var(--text);
+      font-family: 'Outfit', sans-serif;
+      letter-spacing: 0.3px;
+      white-space: nowrap;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 26px;
+    }
+
+    .nav-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      padding: 0 4px;
+      transition: color 0.15s ease;
+      position: relative;
+    }
+    .nav-btn svg {
+      width: 25px;
+      height: 25px;
+      stroke-width: 2.2;
+    }
+    .nav-btn span {
+      font-size: 12.5px;
+      font-weight: 800;
+      font-family: 'Inter', sans-serif;
+    }
+    .nav-btn.orange {
+      color: #f97316;
+    }
+    .nav-btn:hover {
+      color: var(--text);
+    }
+
+    .notif-dot {
+      position: absolute;
+      top: 0;
+      right: 4px;
+      min-width: 16px;
+      height: 16px;
+      border-radius: 8px;
+      background: #f43f5e;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 900;
+      display: grid;
+      place-items: center;
+      padding: 0 3px;
+    }
+
+    /* ==================== 2. ROW: 3 CARDS ==================== */
+    .cards-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      width: 100%;
+    }
+
+    .card-box {
+      background: var(--card-bg);
+      border: var(--card-border-width) solid var(--card-border-color);
+      border-radius: 11px;
+      padding: 13px 16px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+      cursor: pointer;
+      min-height: calc(94px * var(--card-scale));
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+    }
+
+    /* DYNAMIC BORDER & FONT COLOR: ALL FONTS IN BELI & JUAL BECOME GREEN ON UP, RED ON DOWN AND PERSIST */
+    .card-box.dir-up {
+      border-color: var(--dir-green) !important;
+      box-shadow: 0 0 12px rgba(34, 197, 94, 0.35);
+    }
+    .card-box.dir-up .card-title-text,
+    .card-box.dir-up .card-rp-prefix,
+    .card-box.dir-up .card-price-num {
+      color: #22c55e !important;
+      transition: color 0.25s ease;
+    }
+
+    .card-box.dir-down {
+      border-color: var(--dir-red) !important;
+      box-shadow: 0 0 12px rgba(239, 68, 68, 0.35);
+    }
+    .card-box.dir-down .card-title-text,
+    .card-box.dir-down .card-rp-prefix,
+    .card-box.dir-down .card-price-num {
+      color: #ef4444 !important;
+      transition: color 0.25s ease;
+    }
+
+    .card-top-line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-title-text {
+      font-size: 19px;
+      font-weight: 900;
+      font-family: 'Outfit', sans-serif;
+      letter-spacing: 0.4px;
+      color: var(--text);
+      text-transform: uppercase;
+    }
+    .card-title-text .idr-blue {
+      color: #38bdf8;
+    }
+
+    .delta-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 4px;
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+    }
+    .delta-badge.up {
+      background: rgba(34, 197, 94, 0.18);
+      color: #22c55e;
+      border: 1px solid rgba(34, 197, 94, 0.4);
+    }
+    .delta-badge.down {
+      background: rgba(239, 68, 68, 0.18);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.4);
+    }
+
+    .card-price-line {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      margin-top: 4px;
+    }
+    .card-rp-prefix {
+      font-size: calc(19px * var(--font-price-scale));
+      font-weight: 900;
+      font-family: 'Outfit', sans-serif;
+      color: var(--text);
+    }
+    .card-price-num {
+      font-size: calc(23px * var(--font-price-scale));
+      font-weight: 900;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text);
+      letter-spacing: -0.3px;
+      transition: color 0.2s ease;
+    }
+    .card-price-num.price-up-color { color: #22c55e; }
+    .card-price-num.price-down-color { color: #ef4444; }
+
+    /* Flash pulse animation */
+    @keyframes pulseUp {
+      0%, 100% { border-color: var(--dir-green); }
+      30%, 70% { box-shadow: 0 0 18px rgba(34, 197, 94, 0.8), inset 0 0 10px rgba(34, 197, 94, 0.25); }
+    }
+    @keyframes pulseDown {
+      0%, 100% { border-color: var(--dir-red); }
+      30%, 70% { box-shadow: 0 0 18px rgba(239, 68, 68, 0.8), inset 0 0 10px rgba(239, 68, 68, 0.25); }
+    }
+    .flash-up { animation: pulseUp 0.85s ease-out; }
+    .flash-down { animation: pulseDown 0.85s ease-out; }
+
+    /* ==================== 3. ROW: TIER CHIPS ==================== */
+    .tier-cluster {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 7px;
+      margin-top: 1px;
+    }
+
+    .tier-row-1 {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+    }
+    .tier-row-2 {
+      display: flex;
+      justify-content: center;
+    }
+
+    .tier-pill-box {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 8px;
+      padding: 4px 11px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+    }
+    .tier-pill-box:hover {
+      border-color: #f59e0b;
+    }
+
+    .chip-nom {
+      font-size: calc(13px * var(--font-nominal-scale));
+      font-weight: 900;
+      color: #f59e0b;
+      font-family: 'Outfit', sans-serif;
+    }
+    .chip-plus {
+      font-size: calc(12.5px * var(--font-nominal-scale));
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      color: #22c55e;
+      transition: color 0.2s ease;
+    }
+    .chip-gram {
+      font-size: calc(12.5px * var(--font-nominal-scale));
+      font-weight: 600;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* ==================== 4. ROW: STATUS BAR ==================== */
+    .status-row-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 3px;
+      padding: 2px 0;
+      width: 100%;
+    }
+
+    /* LEFT: TITIK ON */
+    .titik-column {
+      display: flex;
+      flex-direction: column;
+      min-width: 150px;
+    }
+    .titik-heading {
+      font-size: 21px;
+      font-weight: 900;
+      font-family: 'Outfit', sans-serif;
+      color: var(--text);
+      letter-spacing: 0.4px;
+      line-height: 1;
+    }
+    .titik-num-line {
+      display: flex;
+      align-items: baseline;
+      gap: 5px;
+      margin-top: 4px;
+    }
+    .titik-rp-tag {
+      font-size: 21px;
+      font-weight: 900;
+      font-family: 'Outfit', sans-serif;
+      color: var(--text);
+    }
+    .titik-val-text {
+      font-size: 23px;
+      font-weight: 900;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text);
+    }
+
+    /* CENTER: CLOCK CAPSULE */
+    .clock-group {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .clock-container {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 14px;
+      padding: 7px 18px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2), 0 3px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    .digital-clock-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 34px;
+      font-weight: 900;
+      color: var(--text);
+      letter-spacing: 2px;
+      line-height: 1;
+    }
+    .digital-clock-val #mm {
+      color: #f59e0b; /* Warna menit ORANGE seperti font MARK */
+    }
+    .digital-clock-val #ss {
+      transition: color 0.2s ease;
+    }
+
+    /* 3D Realistic Toggle Switch Pill (Display status promo only - tidak bisa diubah manual) */
+    .switch-3d-button {
+      width: 68px;
+      height: 33px;
+      border-radius: 17px;
+      position: relative;
+      cursor: default !important;
+      pointer-events: none !important;
+      display: flex;
+      align-items: center;
+      padding: 3px;
+      user-select: none;
+      transition: all 0.25s ease;
+    }
+    .switch-3d-button.on {
+      background: linear-gradient(135deg, #10b981 0%, #16a34a 50%, #22c55e 100%);
+      box-shadow: 0 0 14px rgba(34, 197, 94, 0.5), inset 0 2px 3px rgba(255, 255, 255, 0.45), inset 0 -2px 3px rgba(0, 0, 0, 0.4);
+    }
+    .switch-3d-button.off {
+      background: linear-gradient(135deg, #27272a 0%, #3f3f46 50%, #18181b 100%);
+      box-shadow: inset 0 2px 3px rgba(255, 255, 255, 0.1), inset 0 -2px 3px rgba(0, 0, 0, 0.4);
+    }
+    .switch-knob-sphere {
+      width: 27px;
+      height: 27px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #2c323c 0%, #171a20 55%, #0b0d10 100%);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.75), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .switch-3d-button.on .switch-knob-sphere {
+      transform: translateX(35px);
+    }
+    .switch-text-label {
+      position: absolute;
+      font-size: 11px;
+      font-weight: 900;
+      font-family: 'Outfit', sans-serif;
+      letter-spacing: 0.5px;
+    }
+    .switch-3d-button.on .switch-text-label {
+      left: 10px;
+      color: #ffffff;
+    }
+    .switch-3d-button.off .switch-text-label {
+      right: 10px;
+      color: #94a3b8;
+    }
+
+    /* RIGHT: METRICS LIST */
+    .metrics-column {
+      display: flex;
+      flex-direction: column;
+      gap: 2.5px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 13.5px;
+      min-width: 150px;
+      text-align: left;
+    }
+    .metric-row {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+    .metric-key-title {
+      font-weight: 900;
+      letter-spacing: 0.4px;
+      color: var(--text);
+    }
+    .metric-key-title.orange { color: #f59e0b; }
+    .metric-key-title.green { color: #22c55e; }
+    .metric-val-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 800;
+      color: var(--text);
+    }
+    .metric-val-num.orange { color: #f59e0b; }
+    .metric-val-num.green { color: #22c55e; }
+
+    /* ==================== 5. ROW: TRADINGVIEW CHART ==================== */
+    .chart-container-box {
+      width: 100%;
+      height: 540px;
+      background: var(--panel-bg);
+      border: 1px solid var(--chart-border);
+      border-radius: 9px;
+      overflow: hidden;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+    }
+
+    /* ==================== 6. ROW: RIWAYAT HARGA (DI BAWAH CANDLESTICK CHART) ==================== */
+    .history-section {
+      width: 100%;
+      background: var(--history-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+      margin-top: 4px;
+    }
+
+    .history-header-bar {
+      padding: 12px 16px;
+      background: var(--panel-bg);
+      border-bottom: 1px solid var(--panel-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 900;
+      font-size: 15px;
+    }
+
+    .hist-title-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .hist-count-pill {
+      background: #f59e0b22;
+      color: #f59e0b;
+      border: 1px solid #f59e0b44;
+      font-size: 11px;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+
+    .history-scroll-box {
+      max-height: 440px;
+      overflow: auto;
+    }
+
+    .history-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12.5px;
+      text-align: left;
+      min-width: 980px;
+    }
+
+    .history-table th {
+      position: sticky;
+      top: 0;
+      background: var(--panel-bg);
+      color: var(--text-muted);
+      font-size: 11px;
+      font-weight: 800;
+      padding: 9px 12px;
+      border-bottom: 1px solid var(--panel-border);
+      z-index: 2;
+      letter-spacing: 0.5px;
+    }
+
+    .history-table td {
+      padding: 9px 12px;
+      border-bottom: 1px solid var(--history-row-border);
+      color: var(--text);
+      vertical-align: middle;
+    }
+
+    .hist-up-badge { color: #22c55e; font-weight: 800; }
+    .hist-down-badge { color: #ef4444; font-weight: 800; }
+
+    /* ==================== MODALS ==================== */
+    .modal-backdrop-layer {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal-backdrop-layer.open { display: flex; }
+
+    .modal-content-card {
+      width: min(520px, 94vw);
+      max-height: 85vh;
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 14px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.85);
+      color: var(--text);
+    }
+    .modal-title-bar {
+      padding: 13px 16px;
+      background: var(--panel-bg);
+      border-bottom: 1px solid var(--panel-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 16px;
+      font-weight: 900;
+      font-family: 'Outfit', sans-serif;
+    }
+    .modal-btn-x {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      background: #202738;
+      border: 1px solid #2f3b52;
+      color: #94a3b8;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-scroll-area {
+      padding: 15px 16px;
+      overflow-y: auto;
+      font-size: 13px;
+    }
+
+    /* Menu item in Lainnya */
+    .menu-link-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px;
+      background: #181d2a;
+      border: 1px solid #283347;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+    body.light .menu-link-row {
+      background: #f8fafc;
+      border-color: #e2e8f0;
+    }
+    .menu-link-row:hover {
+      background: #202636;
+    }
+    body.light .menu-link-row:hover {
+      background: #edf2f7;
+    }
+
+    /* Controls line for Ubah Tampilan */
+    .ctrl-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 11px 0;
+      border-bottom: 1px solid var(--panel-border);
+    }
+    .ctrl-label {
+      font-weight: 800;
+      color: var(--text);
+      font-size: 13px;
+    }
+    .ctrl-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .ctrl-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      background: #1e2533;
+      border: 1px solid #334057;
+      color: #ffffff;
+      font-weight: 900;
+      font-size: 15px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    body.light .ctrl-btn {
+      background: #e2e8f0;
+      border-color: #cbd5e1;
+      color: #0f172a;
+    }
+    .ctrl-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 900;
+      color: #f59e0b;
+      min-width: 48px;
+      text-align: center;
+    }
+
+    /* Ubah Nominal Items */
+    .nom-edit-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 9px 12px;
+      background: #181d2a;
+      border: 1px solid #252f42;
+      border-radius: 9px;
+      margin-bottom: 7px;
+    }
+    body.light .nom-edit-row {
+      background: #f8fafc;
+      border-color: #e2e8f0;
+    }
+    .nom-input {
+      background: #10131b;
+      border: 1px solid #2b364a;
+      border-radius: 6px;
+      color: #ffffff;
+      padding: 5px 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 800;
+      font-size: 13px;
+      width: 130px;
+      text-align: right;
+    }
+    body.light .nom-input {
+      background: #ffffff;
+      border-color: #cbd5e1;
+      color: #0f172a;
+    }
+
+    /* iOS Toggle Switch matching user screenshots */
+    .ios-switch {
+      position: relative;
+      display: inline-block;
+      width: 48px;
+      height: 28px;
+      flex-shrink: 0;
+    }
+    .ios-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .ios-switch-slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background-color: #383c44;
+      transition: 0.22s ease;
+      border-radius: 30px;
+    }
+    .ios-switch-slider:before {
+      position: absolute;
+      content: "";
+      height: 22px;
+      width: 22px;
+      left: 3px;
+      bottom: 3px;
+      background-color: #ffffff;
+      transition: 0.22s ease;
+      border-radius: 50%;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.35);
+    }
+    .ios-switch input:checked + .ios-switch-slider {
+      background-color: #00d26a;
+    }
+    .ios-switch input:checked + .ios-switch-slider:before {
+      transform: translateX(20px);
+    }
+
+    .period-badge-inp {
+      background: #171a20;
+      border: 1px solid #2e3542;
+      border-radius: 16px;
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 13px;
+      height: 32px;
+      width: 64px;
+      text-align: center;
+      outline: none;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Indicator item */
+    .indicator-row-box {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      background: #181d2a;
+      border: 1px solid #252f42;
+      border-radius: 9px;
+      margin-bottom: 7px;
+    }
+    body.light .indicator-row-box {
+      background: #f8fafc;
+      border-color: #e2e8f0;
+    }
+
+    /* AUTH GATE (WHATSAPP & PIN LOGIN PRESERVED) */
+    #authGate {
+      position: fixed;
+      inset: 0;
+      z-index: 999999;
+      background: #020304;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      overflow: auto;
+    }
+    #authGate.hidden { display: none !important; }
+    .login-card {
+      background: linear-gradient(180deg, rgba(16,20,28,0.98), rgba(9,12,17,0.99));
+      border: 1px solid #f59e0b;
+      border-radius: 20px;
+      padding: 28px;
+      width: min(520px, 94vw);
+      box-shadow: 0 0 40px rgba(245,158,11,0.15);
+    }
+
+    /* ==================== RESPONSIVE RULES ==================== */
+    @media (max-width: 860px) {
+      .status-row-bar {
+        flex-direction: column;
+        gap: 12px;
+        text-align: center;
+      }
+      .titik-column { align-items: center; }
+      .metrics-column { align-items: center; text-align: center; }
+      .header-date-title { font-size: 17px; }
+      .chart-container-box { height: 440px; }
+    }
+
+    @media (max-width: 640px) {
+      .dashboard-layout { padding: 8px 8px 24px; gap: 9px; }
+      .header-section { flex-direction: column; gap: 8px; align-items: stretch; }
+      .brand-group { justify-content: space-between; }
+      .header-date-title { font-size: 15px; }
+      .nav-actions { justify-content: space-around; gap: 6px; }
+      .cards-row { grid-template-columns: 1fr; gap: 7px; }
+      .card-box { min-height: 72px; padding: 10px 12px; }
+      .card-title-text { font-size: 16px; }
+      .card-rp-prefix { font-size: 16px; }
+      .card-price-num { font-size: 19px; }
+      .clock-container { padding: 6px 12px; gap: 10px; }
+      .digital-clock-val { font-size: 24px; }
+      .switch-3d-button { width: 62px; height: 30px; }
+      .switch-knob-sphere { width: 24px; height: 24px; }
+      .switch-3d-button.on .switch-knob-sphere { transform: translateX(32px); }
+      .chart-container-box { height: 380px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- AUTH GATE (AUTOMATICALLY HIDES IF AUTHENTICATED OR UNRESTRICTED) -->
+<div id="authGate" class="hidden">
+  <div class="login-card">
+    <div style="text-align:center; margin-bottom:18px;">
+      <img src="/assets/aistudio/rein_logo_transparent.png" alt="REINmonitor Logo" style="height:60px; margin:auto; display:block;">
+      <div style="color:#f59e0b; font-weight:900; letter-spacing:2px; font-size:14px; margin-top:10px;">SELAMAT DATANG</div>
+      <div style="color:#94a3b8; font-size:13px; margin-top:4px;">Pantau harga emas real-time dengan akurat</div>
+    </div>
+    <div id="authNumberSec">
+      <div style="font-size:12px; color:#cbd5e1; font-weight:800; margin-bottom:6px;">NOMOR WHATSAPP</div>
+      <div style="display:flex; gap:8px;">
+        <span style="height:48px; width:60px; background:#181d2a; border:1px solid #2f3b52; border-radius:10px; display:flex; align-items:center; justify-content:center; color:#f59e0b; font-weight:900;">+62</span>
+        <input id="authNumber" type="text" placeholder="8xxxxxxxxxx" style="flex:1; height:48px; background:#121620; border:1px solid #2f3b52; border-radius:10px; color:#fff; padding:0 14px; font-size:16px; outline:none;">
+      </div>
+      <button id="authNumberBtn" style="width:100%; height:48px; background:#f59e0b; color:#000; font-weight:900; font-size:15px; border:0; border-radius:10px; margin-top:14px; cursor:pointer;">Masuk ke Akun</button>
+    </div>
+    <div id="authMsg" style="min-height:20px; font-size:12.5px; color:#f87171; text-align:center; margin-top:10px;"></div>
+  </div>
+</div>
+
+<div class="dashboard-layout">
+  <!-- 1. TOP HEADER (CLEAN TRANSPARENT LOGO + SEN, 26 OKT 2026 + SUARA, NEWS, LAINNYA) -->
+  <header class="header-section">
+    <div class="brand-group">
+      <!-- High-res clean cropped transparent 3D metallic logo -->
+      <img src="/assets/aistudio/rein_logo_transparent.png" alt="REINmonitor TREASURY" class="brand-logo-clean">
+      <div class="header-date-title" id="dateLabel">Sen, 26 OKT 2026</div>
+    </div>
+
+    <div class="nav-actions">
+      <!-- Suara -->
+      <button class="nav-btn orange" id="btnSuara" title="Pengaturan Suara">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+        </svg>
+        <span>Suara</span>
+      </button>
+
+      <!-- News -->
+      <button class="nav-btn" id="btnNews" title="Berita Forex Factory">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+        </svg>
+        <span>News</span>
+        <span class="notif-dot" id="newsCount" style="display:none;">0</span>
+      </button>
+
+      <!-- Lainnya -->
+      <button class="nav-btn" id="btnLainnya" title="Pengaturan Lainnya">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+        <span>Lainnya</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- 2. ROW: 3 CARDS (BORDER BERUBAH HIJAU JIKA NAIK, MERAH JIKA TURUN) -->
+  <div class="cards-row">
+    <!-- BELI -->
+    <div class="card-box" id="cardBeli">
+      <div class="card-top-line">
+        <div class="card-title-text">BELI</div>
+        <div class="delta-badge down" id="buyDelta">-616</div>
+      </div>
+      <div class="card-price-line">
+        <span class="card-rp-prefix">RP.</span>
+        <span class="card-price-num" id="buy">2.559.035</span>
+      </div>
+    </div>
+
+    <!-- JUAL -->
+    <div class="card-box" id="cardJual">
+      <div class="card-top-line">
+        <div class="card-title-text">JUAL</div>
+        <div class="delta-badge down" id="sellDelta">-551</div>
+      </div>
+      <div class="card-price-line">
+        <span class="card-rp-prefix">RP.</span>
+        <span class="card-price-num" id="sell">2.474.781</span>
+      </div>
+    </div>
+
+    <!-- USD/IDR -->
+    <div class="card-box" id="cardUsd">
+      <div class="card-top-line">
+        <div class="card-title-text">USD/<span class="idr-blue">IDR</span></div>
+        <div class="delta-badge up" id="usdDelta">+10</div>
+      </div>
+      <div class="card-price-line">
+        <span class="card-rp-prefix">RP.</span>
+        <span class="card-price-num" id="usd">17.630</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. ROW: TIER CHIPS (COMPACT, 10JT-50JT ROW 1 & 60JT ROW 2) -->
+  <div class="tier-cluster" id="tiers">
+    <div class="tier-row-1" id="tierRow1">
+      <div class="tier-pill-box" data-nom="10000000">
+        <span class="chip-nom" id="lbl_nom_10">10jt</span>
+        <span class="chip-plus plus" id="t10p">+Rp1.542</span>
+        <span class="chip-gram gram" id="t10g">4, 183g</span>
+      </div>
+      <div class="tier-pill-box" data-nom="30000000">
+        <span class="chip-nom" id="lbl_nom_30">30jt</span>
+        <span class="chip-plus plus" id="t30p">+Rp6.125</span>
+        <span class="chip-gram gram" id="t30g">12, 549g</span>
+      </div>
+      <div class="tier-pill-box" data-nom="40000000">
+        <span class="chip-nom" id="lbl_nom_40">40jt</span>
+        <span class="chip-plus plus" id="t40p">+Rp8.166</span>
+        <span class="chip-gram gram" id="t40g">16, 732g</span>
+      </div>
+      <div class="tier-pill-box" data-nom="50000000">
+        <span class="chip-nom" id="lbl_nom_50">50jt</span>
+        <span class="chip-plus plus" id="t50p">+Rp11.708</span>
+        <span class="chip-gram gram" id="t50g">20, 915g</span>
+      </div>
+    </div>
+
+    <div class="tier-row-2" id="tierRow2">
+      <div class="tier-pill-box" data-nom="60000000">
+        <span class="chip-nom" id="lbl_nom_60">60jt</span>
+        <span class="chip-plus plus" id="t60p">+Rp16.749</span>
+        <span class="chip-gram gram" id="t60g">25, 098g</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. ROW: STATUS BAR (TITIK ON, DIGITAL CLOCK + 3D SWITCH, METRICS) -->
+  <div class="status-row-bar">
+    <!-- LEFT: TITIK ON -->
+    <div class="titik-column">
+      <div class="titik-heading">TITIK ON</div>
+      <div class="titik-num-line">
+        <span class="titik-rp-tag">RP.</span>
+        <span class="titik-val-text" id="titikOn">2.548.800</span>
+      </div>
+    </div>
+
+    <!-- CENTER: CLOCK & 3D SWITCH -->
+    <div class="clock-group">
+      <div class="clock-container">
+        <div class="digital-clock-val" id="clockDisplay">
+          <span id="hh">11</span>:<span id="mm">09</span>:<span id="ss">22</span>
+        </div>
+        <div class="switch-3d-button on" id="toggleSwitch" title="Status Promo Treasury">
+          <span class="switch-text-label" id="promo">ON</span>
+          <div class="switch-knob-sphere"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: METRICS LIST -->
+    <div class="metrics-column">
+      <div class="metric-row">
+        <span class="metric-key-title">LIMIT :</span>
+        <span class="metric-val-num" id="limit">5</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key-title">SPREAD :</span>
+        <span class="metric-val-num" id="spread">-3.29%</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key-title orange" id="markLabel">MARKDOWN :</span>
+        <span class="metric-val-num orange" id="markdown">-14.200</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key-title green">TERTINGGI :</span>
+        <span class="metric-val-num green" id="high">2.568.174</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key-title">TERENDAH :</span>
+        <span class="metric-val-num" id="low">2.539.457</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. ROW: TRADINGVIEW ADVANCED REALTIME CHART (TVC:GOLD) -->
+  <div class="chart-container-box">
+    <div id="tv" style="width:100%; height:100%;"></div>
+  </div>
+
+  <!-- 6. ROW: RIWAYAT HARGA (DI BAWAH CANDLESTICK CHART) -->
+  <div class="history-section" id="historySection">
+    <div class="history-header-bar">
+      <div class="hist-title-group">
+        <span>↶ &nbsp; Riwayat Perubahan Harga</span>
+        <span class="hist-count-pill" id="historyCount">0 records</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <button id="btnExportCsv" style="background:#1e2533; border:1px solid #334057; color:#cbd5e1; padding:4px 10px; border-radius:6px; font-size:11px; cursor:pointer; font-weight:800;">Export CSV</button>
+        <button id="btnClearHistory" style="background:transparent; border:1px solid #334057; color:#94a3b8; padding:4px 8px; border-radius:6px; font-size:11px; cursor:pointer;">Hapus</button>
+      </div>
+    </div>
+    <div class="history-scroll-box">
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>WAKTU</th>
+            <th>BELI</th>
+            <th>JUAL</th>
+            <th>SPREAD</th>
+            <th>MARK</th>
+            <th>USD/IDR</th>
+            <th>10JT</th>
+            <th>30JT</th>
+            <th>40JT</th>
+            <th>50JT</th>
+            <th>60JT</th>
+          </tr>
+        </thead>
+        <tbody id="historyBody">
+          <tr><td colspan="11" style="text-align:center; padding:24px; color:#94a3b8;">Menghubungkan ke data realtime server...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== MODAL: MENU LAINNYA ==================== -->
+<div class="modal-backdrop-layer" id="modalLainnya">
+  <div class="modal-content-card" style="width:min(440px, 94vw);">
+    <div class="modal-title-bar">
+      <span>⚙️ &nbsp; MENU LAINNYA</span>
+      <button class="modal-btn-x" data-close="modalLainnya">✕</button>
+    </div>
+    <div class="modal-scroll-area" style="display:flex; flex-direction:column; gap:9px;">
+      <!-- Install Aplikasi -->
+      <div class="menu-link-row" id="menuInstallApp">
+        <div>
+          <strong style="color:var(--text); font-size:14.5px; display:block;">📲 Install Aplikasi</strong>
+          <span style="color:var(--text-muted); font-size:12px;">Pasang REINmonitor Treasury ke layar utama perangkat</span>
+        </div>
+        <span style="color:#22c55e; font-weight:900; font-size:14px;">⇩</span>
+      </div>
+
+      <!-- Indikator Grafik -->
+      <div class="menu-link-row" id="menuIndikator">
+        <div>
+          <strong style="color:var(--text); font-size:14.5px; display:block;">〽️ Indikator Grafik</strong>
+          <span style="color:var(--text-muted); font-size:12px;">Pilih indikator Bollinger Bands, MA, EMA, VWAP, RSI</span>
+        </div>
+        <span style="color:#718096; font-size:18px;">›</span>
+      </div>
+
+      <!-- Mode Tampilan (Gelap / Terang) -->
+      <div class="menu-link-row" id="menuToggleTheme">
+        <div>
+          <strong style="color:var(--text); font-size:14.5px; display:block;">🌓 Mode Tampilan</strong>
+          <span style="color:var(--text-muted); font-size:12px;" id="themeStatusText">Mode Gelap (Klik untuk beralih ke Mode Terang)</span>
+        </div>
+        <span style="font-size:18px;" id="themeIcon">☀️</span>
+      </div>
+
+      <!-- Ubah Tampilan -->
+      <div class="menu-link-row" id="openUbahTampilan">
+        <div>
+          <strong style="color:var(--text); font-size:14.5px; display:block;">🎨 Ubah Ukuran Border & Font</strong>
+          <span style="color:var(--text-muted); font-size:12px;">Atur ketebalan border, skala kartu, font harga & nominal</span>
+        </div>
+        <span style="color:#718096; font-size:18px;">›</span>
+      </div>
+
+      <!-- Ubah Nominal Harga -->
+      <div class="menu-link-row" id="openUbahNominal">
+        <div>
+          <strong style="color:var(--text); font-size:14.5px; display:block;">🎚️ Ubah Nominal Harga</strong>
+          <span style="color:var(--text-muted); font-size:12px;">Pilih & ubah angka nominal (10jt, 30jt, dll)</span>
+        </div>
+        <span style="color:#718096; font-size:18px;">›</span>
+      </div>
+
+      <!-- Suara dan Notifikasi -->
+      <div class="menu-link-row" id="openSuaraMenu">
+        <div>
+          <strong style="color:var(--text); font-size:14.5px; display:block;">🔊 Suara dan Notifikasi</strong>
+          <span style="color:var(--text-muted); font-size:12px;">Pengaturan chime naik/turun, voice speech & hitung mundur</span>
+        </div>
+        <span style="color:#718096; font-size:18px;">›</span>
+      </div>
+
+      <!-- Kalkulator Emas -->
+      <div class="menu-link-row" id="openCalc">
+        <div>
+          <strong style="color:var(--text); font-size:14.5px; display:block;">⚖️ Kalkulator Emas Treasury</strong>
+          <span style="color:var(--text-muted); font-size:12px;">Simulasi konversi rupiah ke gram atau sebaliknya</span>
+        </div>
+        <span style="color:#718096; font-size:18px;">›</span>
+      </div>
+
+      <!-- Promo Treasury -->
+      <div class="menu-link-row" id="openPromo">
+        <div>
+          <strong style="color:var(--text); font-size:14.5px; display:block;">🎁 Voucher Promo Treasury</strong>
+          <span style="color:var(--text-muted); font-size:12px;">Kode voucher COBANABUNGEMAS & BETTERFUTURE20</span>
+        </div>
+        <span style="color:#718096; font-size:18px;">›</span>
+      </div>
+
+      <!-- Logout -->
+      <div class="menu-link-row" id="menuLogout" style="border-color:#ef444455; background:#ef444411;">
+        <div>
+          <strong style="color:#ef4444; font-size:14.5px; display:block;">🚪 Log Out</strong>
+          <span style="color:var(--text-muted); font-size:12px;">Keluar dari sesi dashboard aplikasi</span>
+        </div>
+        <span style="color:#ef4444; font-weight:900;">↪</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== MODAL: INDIKATOR GRAFIK ==================== -->
+<div class="modal-backdrop-layer" id="modalIndikator">
+  <div class="modal-content-card" style="width:min(490px, 94vw); background:#0e1013; border-radius:18px;">
+    <div class="modal-title-bar" style="border:none; padding:18px 20px 6px;">
+      <span style="font-size:18px; font-weight:800; color:#fff;">Indikator grafik</span>
+      <button class="modal-btn-x" data-close="modalIndikator" style="border-radius:10px; width:34px; height:34px; background:#1b1f24; border:none; color:#a0aec0;">✕</button>
+    </div>
+    <div class="modal-scroll-area" style="padding:0 20px 20px;">
+      <p style="color:#718096; font-size:12.5px; line-height:1.45; margin-bottom:16px;">
+        Nyalakan indikator yang ingin tampil; grafik langsung berubah. Kotak angka = periode (boleh lebih dari satu, pisahkan koma).
+      </p>
+
+      <div style="display:flex; flex-direction:column; gap:14px;">
+        <!-- Moving Average (MA) -->
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="color:#fff; font-size:14.5px; font-weight:700;">Moving Average (MA)</span>
+          <div style="display:flex; align-items:center; gap:12px;">
+            <input type="text" class="period-badge-inp" value="20" id="inpMaPeriod">
+            <label class="ios-switch"><input type="checkbox" id="indMA" checked><span class="ios-switch-slider"></span></label>
+          </div>
+        </div>
+
+        <!-- Exponential MA (EMA) -->
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="color:#fff; font-size:14.5px; font-weight:700;">Exponential MA (EMA)</span>
+          <div style="display:flex; align-items:center; gap:12px;">
+            <input type="text" class="period-badge-inp" value="20" id="inpEmaPeriod">
+            <label class="ios-switch"><input type="checkbox" id="indEMA" checked><span class="ios-switch-slider"></span></label>
+          </div>
+        </div>
+
+        <!-- Bollinger Bands -->
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="color:#fff; font-size:14.5px; font-weight:700;">Bollinger Bands</span>
+          <div style="display:flex; align-items:center; gap:12px;">
+            <input type="text" class="period-badge-inp" value="20" id="inpBbPeriod">
+            <label class="ios-switch"><input type="checkbox" id="indBB" checked><span class="ios-switch-slider"></span></label>
+          </div>
+        </div>
+
+        <!-- VWAP -->
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="color:#fff; font-size:14.5px; font-weight:700;">VWAP</span>
+          <label class="ios-switch"><input type="checkbox" id="indVWAP" checked><span class="ios-switch-slider"></span></label>
+        </div>
+
+        <!-- RSI -->
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="color:#fff; font-size:14.5px; font-weight:700;">RSI</span>
+          <div style="display:flex; align-items:center; gap:12px;">
+            <input type="text" class="period-badge-inp" value="14" id="inpRsiPeriod">
+            <label class="ios-switch"><input type="checkbox" id="indRSI" checked><span class="ios-switch-slider"></span></label>
+          </div>
+        </div>
+
+        <!-- MACD -->
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="color:#fff; font-size:14.5px; font-weight:700;">MACD</span>
+          <label class="ios-switch"><input type="checkbox" id="indMACD"><span class="ios-switch-slider"></span></label>
+        </div>
+
+        <!-- Stochastic -->
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="color:#fff; font-size:14.5px; font-weight:700;">Stochastic</span>
+          <label class="ios-switch"><input type="checkbox" id="indStoch"><span class="ios-switch-slider"></span></label>
+        </div>
+
+        <!-- ATR -->
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="color:#fff; font-size:14.5px; font-weight:700;">ATR</span>
+          <div style="display:flex; align-items:center; gap:12px;">
+            <input type="text" class="period-badge-inp" value="14" id="inpAtrPeriod">
+            <label class="ios-switch"><input type="checkbox" id="indATR" checked><span class="ios-switch-slider"></span></label>
+          </div>
+        </div>
+
+        <!-- Volume -->
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="color:#fff; font-size:14.5px; font-weight:700;">Volume</span>
+          <label class="ios-switch"><input type="checkbox" id="indVol"><span class="ios-switch-slider"></span></label>
+        </div>
+
+        <!-- Ichimoku Cloud -->
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="color:#fff; font-size:14.5px; font-weight:700;">Ichimoku Cloud</span>
+          <label class="ios-switch"><input type="checkbox" id="indIchimoku"><span class="ios-switch-slider"></span></label>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== MODAL: UBAH TAMPILAN ==================== -->
+<div class="modal-backdrop-layer" id="modalUbahTampilan">
+  <div class="modal-content-card" style="width:min(480px, 94vw);">
+    <div class="modal-title-bar">
+      <span>🎨 &nbsp; PENGATURAN TAMPILAN</span>
+      <button class="modal-btn-x" data-close="modalUbahTampilan">✕</button>
+    </div>
+    <div class="modal-scroll-area">
+      <!-- Tebal Border -->
+      <div class="ctrl-row">
+        <div>
+          <div class="ctrl-label">KETEBALAN BORDER KARTU</div>
+          <div style="font-size:11.5px; color:var(--text-muted);">Atur tebal garis border Beli & Jual</div>
+        </div>
+        <div class="ctrl-actions">
+          <button class="ctrl-btn" id="btnBorderMinus">−</button>
+          <span class="ctrl-val" id="valBorderText">1px</span>
+          <button class="ctrl-btn" id="btnBorderPlus">+</button>
+        </div>
+      </div>
+
+      <!-- Ukuran Kotak / Skala Kartu -->
+      <div class="ctrl-row">
+        <div>
+          <div class="ctrl-label">TINGGI KOTAK KARTU</div>
+          <div style="font-size:11.5px; color:var(--text-muted);">Skala tinggi kotak Beli, Jual, USD</div>
+        </div>
+        <div class="ctrl-actions">
+          <button class="ctrl-btn" id="btnScaleMinus">−</button>
+          <span class="ctrl-val" id="valScaleText">100%</span>
+          <button class="ctrl-btn" id="btnScalePlus">+</button>
+        </div>
+      </div>
+
+      <!-- Ukuran Font Harga -->
+      <div class="ctrl-row">
+        <div>
+          <div class="ctrl-label">FONT ANGKA HARGA</div>
+          <div style="font-size:11.5px; color:var(--text-muted);">Ukuran font angka harga Beli & Jual</div>
+        </div>
+        <div class="ctrl-actions">
+          <button class="ctrl-btn" id="btnFontPriceMinus">−</button>
+          <span class="ctrl-val" id="valFontPriceText">100%</span>
+          <button class="ctrl-btn" id="btnFontPricePlus">+</button>
+        </div>
+      </div>
+
+      <!-- Ukuran Font Nominal Chip -->
+      <div class="ctrl-row">
+        <div>
+          <div class="ctrl-label">FONT NOMINAL CHIP</div>
+          <div style="font-size:11.5px; color:var(--text-muted);">Ukuran font chip 10jt, 30jt, dll</div>
+        </div>
+        <div class="ctrl-actions">
+          <button class="ctrl-btn" id="btnFontNomMinus">−</button>
+          <span class="ctrl-val" id="valFontNomText">100%</span>
+          <button class="ctrl-btn" id="btnFontNomPlus">+</button>
+        </div>
+      </div>
+
+      <!-- Reset button -->
+      <button id="btnResetTampilan" style="width:100%; margin-top:16px; padding:12px; background:#241d08; border:1px solid #b47806; color:#f59e0b; border-radius:10px; font-weight:900; font-size:13.5px; cursor:pointer;">
+        ↻ &nbsp; Reset Tampilan (Kembali ke Default)
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== MODAL: NOMINAL UNTUNG & GRAMASI ==================== -->
+<div class="modal-backdrop-layer" id="modalUbahNominal">
+  <div class="modal-content-card" style="width:min(490px, 94vw); background:#0e1013; border-radius:18px;">
+    <div class="modal-title-bar" style="border:none; padding:18px 20px 8px;">
+      <span style="font-size:15px; font-weight:800; color:#cbd5e1; letter-spacing:0.5px;">NOMINAL UNTUNG & GRAMASI</span>
+      <button class="modal-btn-x" data-close="modalUbahNominal" style="border-radius:10px; width:34px; height:34px; background:#1b1f24; border:none; color:#a0aec0;">✕</button>
+    </div>
+    <div class="modal-scroll-area" style="padding:0 20px 20px;">
+      <div style="display:flex; flex-direction:column; gap:16px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <strong style="color:#fff; font-size:16px;">10jt</strong>
+            <span style="color:#718096; font-size:15px;">Rp10.000.000</span>
+          </div>
+          <label class="ios-switch"><input type="checkbox" id="chkNom10" checked><span class="ios-switch-slider"></span></label>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <strong style="color:#fff; font-size:16px;">30jt</strong>
+            <span style="color:#718096; font-size:15px;">Rp30.000.000</span>
+          </div>
+          <label class="ios-switch"><input type="checkbox" id="chkNom30" checked><span class="ios-switch-slider"></span></label>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <strong style="color:#fff; font-size:16px;">40jt</strong>
+            <span style="color:#718096; font-size:15px;">Rp40.000.000</span>
+          </div>
+          <label class="ios-switch"><input type="checkbox" id="chkNom40" checked><span class="ios-switch-slider"></span></label>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <strong style="color:#fff; font-size:16px;">50jt</strong>
+            <span style="color:#718096; font-size:15px;">Rp50.000.000</span>
+          </div>
+          <label class="ios-switch"><input type="checkbox" id="chkNom50" checked><span class="ios-switch-slider"></span></label>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <strong style="color:#fff; font-size:16px;">60jt</strong>
+            <span style="color:#718096; font-size:15px;">Rp60.000.000</span>
+          </div>
+          <label class="ios-switch"><input type="checkbox" id="chkNom60" checked><span class="ios-switch-slider"></span></label>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== MODAL: SUARA DAN NOTIFIKASI ==================== -->
+<div class="modal-backdrop-layer" id="modalSuara">
+  <div class="modal-content-card" style="width:min(500px, 94vw); background:#0e1013; border-radius:18px;">
+    <div class="modal-title-bar" style="border:none; padding:18px 20px 10px;">
+      <span style="font-size:18px; font-weight:800; color:#fff;">Suara & notifikasi</span>
+      <button class="modal-btn-x" data-close="modalSuara" style="border-radius:10px; width:34px; height:34px; background:#1b1f24; border:none; color:#a0aec0;">✕</button>
+    </div>
+    <div class="modal-scroll-area" style="padding:0 20px 20px;">
+      <!-- Notifikasi HP Box -->
+      <div style="background:#16191f; border:1px solid #252b36; border-radius:14px; padding:14px 16px; display:flex; align-items:center; gap:14px; margin-bottom:18px;">
+        <div style="width:38px; height:38px; border-radius:10px; background:#241d08; display:flex; align-items:center; justify-content:center; color:#f59e0b; font-size:18px;">🔔</div>
+        <div>
+          <strong style="color:#fff; font-size:15px; display:block;">Notifikasi HP</strong>
+          <span style="color:#718096; font-size:12.5px;">Kabar harga & promo walau aplikasi ditutup</span>
+        </div>
+      </div>
+
+      <!-- SUARA Section -->
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <span style="font-size:12px; font-weight:800; color:#718096; letter-spacing:0.5px;">SUARA</span>
+        <div style="display:flex; gap:8px;">
+          <button id="sndAllOn" style="background:#0d2618; border:1px solid #134e2c; color:#10b981; font-weight:800; font-size:12px; padding:4px 12px; border-radius:14px; cursor:pointer;">Aktifkan semua</button>
+          <button id="sndAllOff" style="background:#281215; border:1px solid #4c1d22; color:#ef4444; font-weight:800; font-size:12px; padding:4px 12px; border-radius:14px; cursor:pointer;">Matikan semua</button>
+        </div>
+      </div>
+
+      <!-- Rows -->
+      <div style="display:flex; flex-direction:column; gap:14px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="color:#fff; font-size:14.5px; font-weight:700;">Harga naik</span>
+          <label class="ios-switch"><input type="checkbox" id="sndPriceUp" checked><span class="ios-switch-slider"></span></label>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="color:#fff; font-size:14.5px; font-weight:700;">Harga naik besar (> Rp3.000)</span>
+          <label class="ios-switch"><input type="checkbox" id="sndHighUp" checked><span class="ios-switch-slider"></span></label>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="color:#fff; font-size:14.5px; font-weight:700;">Harga turun</span>
+          <label class="ios-switch"><input type="checkbox" id="sndPriceDown" checked><span class="ios-switch-slider"></span></label>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="color:#fff; font-size:14.5px; font-weight:700;">Harga turun besar (> Rp3.000)</span>
+          <label class="ios-switch"><input type="checkbox" id="sndHighDown" checked><span class="ios-switch-slider"></span></label>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="color:#fff; font-size:14.5px; font-weight:700;">Promo ON / OFF</span>
+          <label class="ios-switch"><input type="checkbox" id="sndPromoVoice" checked><span class="ios-switch-slider"></span></label>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="color:#fff; font-size:14.5px; font-weight:700;">Hitung mundur detik 55–59</span>
+          <label class="ios-switch"><input type="checkbox" id="sndCountdown" checked><span class="ios-switch-slider"></span></label>
+        </div>
+
+        <div style="background:#16191f; border-radius:12px; padding:10px 14px; display:flex; justify-content:space-between; align-items:center; margin-top:4px;">
+          <span style="color:#fff; font-size:14px; font-weight:700;">Ulangi suara ON</span>
+          <select id="sndRepeatInterval" style="background:#1f242d; color:#fff; border:1px solid #333c4a; border-radius:8px; padding:6px 10px; font-size:13px; font-weight:700; outline:none;">
+            <option value="1">1 menit</option>
+            <option value="2">2 menit</option>
+            <option value="5">5 menit</option>
+          </select>
+        </div>
+
+        <!-- GETAR Section -->
+        <div style="font-size:12px; font-weight:800; color:#718096; letter-spacing:0.5px; margin-top:8px;">GETAR</div>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="color:#fff; font-size:14.5px; font-weight:700;">Getar HP</span>
+          <label class="ios-switch"><input type="checkbox" id="sndVibrate" checked><span class="ios-switch-slider"></span></label>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="color:#fff; font-size:14.5px; font-weight:700;">Goyang layar</span>
+          <label class="ios-switch"><input type="checkbox" id="sndShake" checked><span class="ios-switch-slider"></span></label>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== MODAL: NEWS FOREX FACTORY ==================== -->
+<div class="modal-backdrop-layer" id="modalNews">
+  <div class="modal-content-card" style="width:min(580px, 94vw);">
+    <div class="modal-title-bar">
+      <span>📰 &nbsp; NEWS XAU/USD (FOREX FACTORY)</span>
+      <button class="modal-btn-x" data-close="modalNews">✕</button>
+    </div>
+    <div class="modal-scroll-area" style="display:flex; flex-direction:column; gap:10px;" id="newsList">
+      <div style="padding:12px; background:#181d2a; border-radius:8px; border-left:3px solid #ef4444;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <strong style="color:#fff;">USD Core CPI m/m</strong>
+          <span style="background:rgba(34,197,94,0.15); color:#4ade80; padding:2px 6px; border-radius:4px; font-size:11px; font-weight:800;">Emas Naik ⌃</span>
+        </div>
+        <div style="color:#94a3b8; font-size:11.5px; margin-top:3px;">🕒 19:30 WIB · Senin, 26 Okt 2026 · <span style="color:#f59e0b;">15 menit lagi</span></div>
+        <div style="margin-top:4px; font-size:11.5px; color:#cbd5e1;">Actual: <b>0.2%</b> · Forecast: <b>0.3%</b> · Prev: <b>0.3%</b></div>
+      </div>
+      <div style="padding:12px; background:#181d2a; border-radius:8px; border-left:3px solid #ef4444;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <strong style="color:#fff;">USD Unemployment Claims</strong>
+          <span style="background:rgba(34,197,94,0.15); color:#4ade80; padding:2px 6px; border-radius:4px; font-size:11px; font-weight:800;">Emas Naik ⌃</span>
+        </div>
+        <div style="color:#94a3b8; font-size:11.5px; margin-top:3px;">🕒 20:30 WIB · Senin, 26 Okt 2026</div>
+        <div style="margin-top:4px; font-size:11.5px; color:#cbd5e1;">Forecast: <b>215K</b> · Prev: <b>219K</b></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== MODAL: KALKULATOR EMAS ==================== -->
+<div class="modal-backdrop-layer" id="modalCalc">
+  <div class="modal-content-card">
+    <div class="modal-title-bar">
+      <span>⚖️ &nbsp; KALKULATOR EMAS</span>
+      <button class="modal-btn-x" data-close="modalCalc">✕</button>
+    </div>
+    <div class="modal-scroll-area" style="display:flex; flex-direction:column; gap:12px;">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+        <div style="background:#181d2a; padding:8px; border-radius:8px; text-align:center;">
+          <span style="color:#94a3b8; font-size:11px;">Harga Beli</span>
+          <div style="color:#22c55e; font-weight:900; font-size:15px;" id="cBuyVal">Rp 2.559.035</div>
+        </div>
+        <div style="background:#181d2a; padding:8px; border-radius:8px; text-align:center;">
+          <span style="color:#94a3b8; font-size:11px;">Harga Jual</span>
+          <div style="color:#38bdf8; font-weight:900; font-size:15px;" id="cSellVal">Rp 2.474.781</div>
+        </div>
+      </div>
+      <div>
+        <label style="display:block; font-size:11.5px; font-weight:800; color:var(--text-muted); margin-bottom:5px;">NOMINAL UANG (RP)</label>
+        <input type="text" id="calcInput" value="10000000" style="width:100%; height:44px; background:#10131a; border:1px solid #283346; border-radius:8px; color:#fff; font-size:17px; font-weight:900; padding:0 12px; outline:none;">
+      </div>
+      <div style="background:#1c2230; border:1px solid rgba(245,158,11,0.3); border-radius:10px; padding:12px;">
+        <span style="color:#94a3b8; font-size:11px;">Estimasi Emas Diperoleh:</span>
+        <div style="color:#f59e0b; font-size:24px; font-weight:900; margin-top:3px;" id="calcOutput">3.9077 gr</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== MODAL: PROMO TREASURY ==================== -->
+<div class="modal-backdrop-layer" id="modalPromo">
+  <div class="modal-content-card">
+    <div class="modal-title-bar">
+      <span>🎁 &nbsp; PROMO TREASURY</span>
+      <button class="modal-btn-x" data-close="modalPromo">✕</button>
+    </div>
+    <div class="modal-scroll-area" style="display:flex; flex-direction:column; gap:10px;">
+      <!-- Token monitoring connect box preserved -->
+      <div style="margin-bottom:12px; padding:12px; background:#181d2a; border:1px solid #283347; border-radius:10px;">
+        <div style="font-size:11px; font-weight:800; color:#f59e0b; margin-bottom:6px;">TOKEN MONITORING TREASURY</div>
+        <div style="display:flex; gap:8px;">
+          <input id="tsTokenInput" type="text" placeholder="Tempel token sesi di sini..." style="flex:1; height:36px; background:#10131a; border:1px solid #2b364a; border-radius:6px; color:#fff; padding:0 10px; font-size:12px; outline:none;">
+          <button id="tsTokenSaveBtn" style="height:36px; padding:0 12px; background:#22c55e; color:#000; border:0; border-radius:6px; font-weight:900; font-size:12px; cursor:pointer;">Sambungkan</button>
+        </div>
+        <div id="tsTokenMsg" style="font-size:11px; color:#94a3b8; margin-top:5px;">Deteksi promo otomatis aktif 24/7.</div>
+      </div>
+
+      <div style="background:#181d2a; padding:12px; border-radius:10px; border:1px solid rgba(245,158,11,0.3);">
+        <strong style="color:#fff; font-size:14px; display:block;">Promo Pengguna Baru</strong>
+        <span style="color:#cbd5e1; font-size:12px; display:block; margin:2px 0 8px;">Disc. 99%* Khusus Pembelian Pertama</span>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="background:#261d07; color:#f59e0b; padding:3px 8px; border-radius:5px; font-weight:900; font-family:monospace; font-size:13px;">COBANABUNGEMAS</span>
+          <button class="btnCopyCode" data-code="COBANABUNGEMAS" style="padding:5px 12px; background:#f59e0b; color:#000; border:0; border-radius:6px; font-weight:800; cursor:pointer;">Salin</button>
+        </div>
+      </div>
+      <div style="background:#181d2a; padding:12px; border-radius:10px; border:1px solid rgba(34,197,94,0.3);">
+        <strong style="color:#fff; font-size:14px; display:block;">#BuatMasaDepan20</strong>
+        <span style="color:#cbd5e1; font-size:12px; display:block; margin:2px 0 8px;">Menangkan 1 Dryer Portable BOLDe!</span>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="background:#072615; color:#34d399; padding:3px 8px; border-radius:5px; font-weight:900; font-family:monospace; font-size:13px;">BETTERFUTURE20</span>
+          <button class="btnCopyCode" data-code="BETTERFUTURE20" style="padding:5px 12px; background:#22c55e; color:#000; border:0; border-radius:6px; font-weight:800; cursor:pointer;">Salin</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== CORE JAVASCRIPT & SERVER CONNECTIONS ==================== -->
+<script>
+  const fmt = n => Number(n || 0).toLocaleString('id-ID');
+
+  // Nominal settings with storage support
+  let nominalConfig = {
+    10: { val: 10000000, enabled: true, modal: 9669043.94815373 },
+    30: { val: 30000000, enabled: true, modal: 29004232.779941812 },
+    40: { val: 40000000, enabled: true, modal: 38672311.01764273 },
+    50: { val: 50000000, enabled: true, modal: 48340388.28876317 },
+    60: { val: 60000000, enabled: true, modal: 58006500.0 }
+  };
+
+  try {
+    const savedNom = localStorage.getItem('treasury_nominal_config');
+    if (savedNom) Object.assign(nominalConfig, JSON.parse(savedNom));
+  } catch (_) {}
+
+  // Appearance scaling configuration
+  let appearanceConfig = {
+    borderWidth: 1, // in px
+    cardScale: 100, // %
+    fontPriceScale: 100, // %
+    fontNominalScale: 100 // %
+  };
+
+  try {
+    const savedApp = localStorage.getItem('treasury_appearance_cfg');
+    if (savedApp) Object.assign(appearanceConfig, JSON.parse(savedApp));
+  } catch (_) {}
+
+  function applyAppearance() {
+    document.documentElement.style.setProperty('--card-border-width', appearanceConfig.borderWidth + 'px');
+    document.documentElement.style.setProperty('--card-scale', appearanceConfig.cardScale / 100);
+    document.documentElement.style.setProperty('--font-price-scale', appearanceConfig.fontPriceScale / 100);
+    document.documentElement.style.setProperty('--font-nominal-scale', appearanceConfig.fontNominalScale / 100);
+
+    document.getElementById('valBorderText').textContent = appearanceConfig.borderWidth + 'px';
+    document.getElementById('valScaleText').textContent = appearanceConfig.cardScale + '%';
+    document.getElementById('valFontPriceText').textContent = appearanceConfig.fontPriceScale + '%';
+    document.getElementById('valFontNomText').textContent = appearanceConfig.fontNominalScale + '%';
+
+    localStorage.setItem('treasury_appearance_cfg', JSON.stringify(appearanceConfig));
+  }
+  applyAppearance();
+
+  // Dark / Light Theme
+  let isLightMode = localStorage.getItem('treasury_light_mode') === '1';
+  function applyTheme() {
+    document.body.classList.toggle('light', isLightMode);
+    document.getElementById('themeStatusText').textContent = isLightMode
+      ? 'Mode Terang (Klik untuk beralih ke Mode Gelap)'
+      : 'Mode Gelap (Klik untuk beralih ke Mode Terang)';
+    document.getElementById('themeIcon').textContent = isLightMode ? '🌙' : '☀️';
+    localStorage.setItem('treasury_light_mode', isLightMode ? '1' : '0');
+  }
+  applyTheme();
+
+  // PWA install prompt
+  let deferredInstallPrompt = null;
+  window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault();
+    deferredInstallPrompt = e;
+  });
+
+  // Selected Technical Indicators
+  let selectedIndicators = ['bb', 'ma', 'vwap'];
+  try {
+    const savedInd = localStorage.getItem('treasury_indicators_sel');
+    if (savedInd) selectedIndicators = JSON.parse(savedInd);
+  } catch (_) {}
+
+  let currentBuy = 2559035;
+  let currentSell = 2474781;
+  let currentUsd = 17630;
+  let lastBuy = 2559035;
+  let isPromoOn = true;
+  let priceHistory = [];
+
+  // Web Audio Synthesizer
+  let audioCtx = null;
+  function getAudioCtx() {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    return audioCtx;
+  }
+
+  function playChime(isUp, isHigh = false) {
+    try {
+      const ctx = getAudioCtx();
+      const now = ctx.currentTime;
+      const freqs = isUp
+        ? (isHigh ? [523.25, 659.25, 783.99, 1046.5] : [587.33, 880.0])
+        : (isHigh ? [880.0, 659.25, 523.25, 440.0] : [698.46, 523.25]);
+
+      freqs.forEach((freq, idx) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = isUp ? 'triangle' : 'sine';
+        osc.frequency.setValueAtTime(freq, now + idx * 0.07);
+        gain.gain.setValueAtTime(0.001, now + idx * 0.07);
+        gain.gain.linearRampToValueAtTime(0.18, now + idx * 0.07 + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.07 + 0.26);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now + idx * 0.07);
+        osc.stop(now + idx * 0.07 + 0.28);
+      });
+    } catch (_) {}
+  }
+
+  function playTick() {
+    try {
+      const ctx = getAudioCtx();
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(1174.66, now);
+      gain.gain.setValueAtTime(0.08, now);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.05);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.06);
+    } catch (_) {}
+  }
+
+  function speakPromo(status) {
+    if ('speechSynthesis' in window && document.getElementById('sndPromoVoice').checked) {
+      try {
+        window.speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(status === 'ON' ? 'Promo on' : 'Promo off');
+        u.lang = 'id-ID';
+        window.speechSynthesis.speak(u);
+      } catch (_) {}
+    }
+  }
+
+  // Live Digital Clock & Date
+  function updateClock() {
+    const now = new Date();
+    const parts = new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Asia/Jakarta',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    }).format(now).split(':');
+
+    document.getElementById('hh').textContent = parts[0];
+
+    // Warna menit: ORANGE seperti warna font MARK (#f59e0b)
+    const mmEl = document.getElementById('mm');
+    if (mmEl) {
+      mmEl.textContent = parts[1];
+      mmEl.style.color = '#f59e0b';
+    }
+
+    // Warna detik: Sebelum detik 50 warna HIJAU (#22c55e), mulai detik 50 warna MERAH (#ef4444)
+    const sec = now.getSeconds();
+    const ssEl = document.getElementById('ss');
+    if (ssEl) {
+      ssEl.textContent = parts[2];
+      ssEl.style.color = sec < 50 ? '#22c55e' : '#ef4444';
+    }
+
+    // Date formatting: Sen, 26 OKT 2026
+    const days = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
+    const months = ['JAN', 'FEB', 'MAR', 'APR', 'MEI', 'JUN', 'JUL', 'AGU', 'SEP', 'OKT', 'NOV', 'DES'];
+    const dateStr = `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+    document.getElementById('dateLabel').textContent = dateStr;
+
+    // Countdown tick at 55..59s
+    if (document.getElementById('sndCountdown')?.checked && sec >= 55 && sec <= 59) {
+      playTick();
+    }
+  }
+  setInterval(updateClock, 1000);
+  updateClock();
+
+  // Tier calculation based on current nominalConfig
+  function calculateTiers() {
+    const tierData = {};
+    [10, 30, 40, 50, 60].forEach(k => {
+      const cfg = nominalConfig[k];
+      const pillEl = document.querySelector(`.tier-pill-box[data-nom="${cfg.val}"]`) || document.getElementById(`lbl_nom_${k}`)?.parentElement;
+      if (!pillEl) return;
+
+      if (!cfg.enabled) {
+        pillEl.style.display = 'none';
+        return;
+      }
+      pillEl.style.display = 'inline-flex';
+
+      const n = cfg.val;
+      const grams = n / currentBuy;
+      const modal = cfg.modal || (n * 0.967);
+      const titik = (n * currentSell) / modal;
+      const plus = Math.round(grams * (titik - currentBuy));
+
+      tierData[k] = { grams, plus };
+
+      const lblNom = document.getElementById(`lbl_nom_${k}`);
+      const pEl = document.getElementById(`t${k}p`);
+      const gEl = document.getElementById(`t${k}g`);
+
+      if (lblNom) lblNom.textContent = `${n / 1000000}jt`;
+      if (pEl) {
+        pEl.textContent = `${plus >= 0 ? '+' : '-'}Rp${fmt(Math.abs(plus))}`;
+        pEl.style.color = plus >= 0 ? '#22c55e' : '#ef4444';
+      }
+      if (gEl) {
+        const whole = Math.floor(grams);
+        const frac = Math.round((grams - whole) * 1000);
+        gEl.textContent = `${whole}, ${frac.toString().padStart(3, '0')}g`;
+      }
+    });
+
+    // TITIK ON (default 10jt)
+    const baseModal = nominalConfig[10]?.modal || 9669043.94815373;
+    const tVal = Math.round((10000000 * currentSell) / baseModal);
+    document.getElementById('titikOn').textContent = fmt(tVal);
+
+    // Spread %
+    const sp = (((currentSell - currentBuy) / currentBuy) * 100).toFixed(2);
+    document.getElementById('spread').textContent = `${sp}%`;
+
+    return { tierData, sp, tVal };
+  }
+  calculateTiers();
+
+  // Price updates with active border color (GREEN on up, RED on down) & delta badge
+  function applyPrices(b, s, u, deltaB, deltaS) {
+    if (b > 0) currentBuy = b;
+    if (s > 0) currentSell = s;
+    if (u > 0) currentUsd = u;
+
+    const numBeli = document.getElementById('buy');
+    const numJual = document.getElementById('sell');
+    const numUsd = document.getElementById('usd');
+
+    numBeli.textContent = fmt(currentBuy);
+    numJual.textContent = fmt(currentSell);
+    numUsd.textContent = fmt(currentUsd);
+
+    const diff = deltaB !== undefined ? Number(deltaB) : (currentBuy - lastBuy);
+    if (diff !== 0) {
+      const cardB = document.getElementById('cardBeli');
+      const cardJ = document.getElementById('cardJual');
+      const isUp = diff > 0;
+      const isHigh = Math.abs(diff) >= 3000;
+
+      // SET BORDER & ALL FONT COLORS GREEN ON UP, RED ON DOWN (PERSISTENT UNTIL NEXT UPDATE)
+      cardB.classList.remove('dir-up', 'dir-down', 'flash-up', 'flash-down');
+      cardJ.classList.remove('dir-up', 'dir-down', 'flash-up', 'flash-down');
+      void cardB.offsetWidth;
+
+      if (isUp) {
+        cardB.classList.add('dir-up', 'flash-up');
+        cardJ.classList.add('dir-up', 'flash-up');
+      } else {
+        cardB.classList.add('dir-down', 'flash-down');
+        cardJ.classList.add('dir-down', 'flash-down');
+      }
+
+      // Denyut flash hilang setelah 850ms, tetapi WARNA BORDER & FONT TETAP MENETAP SAMPAI UPDATE HARGA BERIKUTNYA
+      setTimeout(() => {
+        cardB.classList.remove('flash-up', 'flash-down');
+        cardJ.classList.remove('flash-up', 'flash-down');
+      }, 850);
+
+      const badgeB = document.getElementById('buyDelta');
+      badgeB.textContent = (diff > 0 ? '+' : '') + fmt(diff);
+      badgeB.className = 'delta-badge ' + (diff > 0 ? 'up' : 'down');
+
+      const badgeJ = document.getElementById('sellDelta');
+      const diffS = deltaS !== undefined ? Number(deltaS) : Math.round(diff * 0.967);
+      badgeJ.textContent = (diffS > 0 ? '+' : '') + fmt(diffS);
+      badgeJ.className = 'delta-badge ' + (diffS > 0 ? 'up' : 'down');
+
+      // Audio chimes
+      if (isUp && document.getElementById('sndPriceUp').checked) {
+        playChime(true, isHigh && document.getElementById('sndHighUp').checked);
+      }
+      if (!isUp && document.getElementById('sndPriceDown').checked) {
+        playChime(false, isHigh);
+      }
+
+      // Update High & Low
+      const highEl = document.getElementById('high');
+      const lowEl = document.getElementById('low');
+      const curHigh = Number(highEl.textContent.replace(/\./g, '')) || 2568174;
+      const curLow = Number(lowEl.textContent.replace(/\./g, '')) || 2539457;
+
+      if (currentBuy > curHigh) highEl.textContent = fmt(currentBuy);
+      if (currentBuy < curLow) lowEl.textContent = fmt(currentBuy);
+
+      // Record to Price History
+      const { tierData, sp } = calculateTiers();
+      recordHistoryRow(diff, sp, tierData);
+    }
+    lastBuy = currentBuy;
+    calculateTiers();
+  }
+
+  // RECORD ROW TO RIWAYAT HARGA TABLE
+  function recordHistoryRow(diff, sp, tierData) {
+    const timeStr = new Date().toLocaleTimeString('id-ID', {
+      timeZone: 'Asia/Jakarta',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    });
+
+    const markAmount = document.getElementById('markdown').textContent;
+    const isUp = diff > 0;
+
+    const rowItem = {
+      time: timeStr,
+      buy: currentBuy,
+      sell: currentSell,
+      diff,
+      isUp,
+      spread: sp,
+      mark: markAmount,
+      usd: currentUsd,
+      t10: tierData[10],
+      t30: tierData[30],
+      t40: tierData[40],
+      t50: tierData[50],
+      t60: tierData[60]
+    };
+
+    priceHistory.unshift(rowItem);
+    if (priceHistory.length > 100) priceHistory.pop();
+    renderHistoryTable();
+  }
+
+  function renderHistoryTable() {
+    const tbody = document.getElementById('historyBody');
+    const badge = document.getElementById('historyCount');
+    badge.textContent = `${priceHistory.length} records`;
+
+    if (!priceHistory.length) {
+      tbody.innerHTML = '<tr><td colspan="11" style="text-align:center; padding:20px; color:#94a3b8;">Belum ada riwayat harga.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = priceHistory.slice(0, 40).map(row => {
+      const diffSign = row.diff > 0 ? '▲ +' : '▼ ';
+      const diffClass = row.diff > 0 ? 'hist-up-badge' : 'hist-down-badge';
+
+      const formatT = (t) => {
+        if (!t) return '—';
+        const s = t.plus >= 0 ? '+' : '-';
+        const color = t.plus >= 0 ? '#22c55e' : '#ef4444';
+        return `<div>${t.grams.toFixed(3)}g</div><div style="color:${color}; font-size:11px;">${s}Rp${fmt(Math.abs(t.plus))}</div>`;
+      };
+
+      return `<tr>
+        <td style="font-weight:800; color:var(--text);">${row.time}</td>
+        <td>
+          <div style="font-weight:800;">Rp ${fmt(row.buy)}</div>
+          <div class="${diffClass}" style="font-size:11px;">${diffSign}${fmt(Math.abs(row.diff))}</div>
+        </td>
+        <td>
+          <div style="font-weight:800;">Rp ${fmt(row.sell)}</div>
+          <div class="${diffClass}" style="font-size:11px;">${diffSign}${fmt(Math.abs(Math.round(row.diff * 0.967)))}</div>
+        </td>
+        <td style="color:#f59e0b; font-weight:800;">${row.spread}%</td>
+        <td style="color:#f59e0b; font-weight:800;">${row.mark}</td>
+        <td style="color:#38bdf8; font-weight:800;">Rp ${fmt(row.usd)}</td>
+        <td>${formatT(row.t10)}</td>
+        <td>${formatT(row.t30)}</td>
+        <td>${formatT(row.t40)}</td>
+        <td>${formatT(row.t50)}</td>
+        <td>${formatT(row.t60)}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  // ==================== REALTIME SERVER CONNECTORS ====================
+  // 1. Polling /api/live
+  async function refreshServerLive() {
+    try {
+      const res = await fetch('/api/live?t=' + Date.now(), { cache: 'no-store' });
+      if (res.ok) {
+        const d = await res.json();
+        const b = Number(d.buy_price ?? d.buy);
+        const s = Number(d.sell_price ?? d.sell);
+        const u = Number(d.usdidr ?? d.usd_idr);
+        const dB = d.buy_change !== undefined ? Number(d.buy_change) : undefined;
+        const dS = d.sell_change !== undefined ? Number(d.sell_change) : undefined;
+
+        if (b > 0 && s > 0) {
+          applyPrices(b, s, u, dB, dS);
+          return;
+        }
+      }
+    } catch (_) {}
+
+    // Simulated micro-movement fallback if server is offline/starting
+    const isUp = Math.random() > 0.48;
+    const deltaAmount = (isUp ? 1 : -1) * (Math.floor(Math.random() * 550) + 120);
+    const nextBuy = Math.max(2480000, currentBuy + deltaAmount);
+    const nextSell = Math.round(nextBuy * 0.967);
+    const nextUsd = currentUsd + (Math.random() > 0.5 ? 5 : -5);
+
+    applyPrices(nextBuy, nextSell, nextUsd);
+  }
+  setInterval(refreshServerLive, 3500);
+  refreshServerLive();
+
+  // 2. SSE Stream: /sse
+  try {
+    const es = new EventSource('/sse');
+    es.onmessage = e => {
+      try {
+        const d = JSON.parse(e.data);
+        if (d.type === 'price') {
+          const b = Number(d.buy_price ?? d.buy);
+          const s = Number(d.sell_price ?? d.sell);
+          const u = Number(d.usdidr ?? d.usd_idr);
+          if (b > 0 && s > 0) applyPrices(b, s, u, d.buy_change, d.sell_change);
+        } else if (d.type === 'promo_status' || d.type === 'promo') {
+          updatePromoStatus(String(d.status ?? (d.promo_on ? 'ON' : 'OFF')).toUpperCase());
+        }
+      } catch (_) {}
+    };
+  } catch (_) {}
+
+  // 3. /api/promo-live
+  async function refreshPromoLive() {
+    try {
+      const r = await fetch('/api/promo-live?t=' + Date.now(), { cache: 'no-store' });
+      if (r.ok) {
+        const d = await r.json();
+        const st = String(d.status ?? (d.promo_on === true ? 'ON' : 'OFF')).toUpperCase();
+        updatePromoStatus(st);
+        if (d.limit) document.getElementById('limit').textContent = d.limit;
+      }
+    } catch (_) {}
+  }
+  setInterval(refreshPromoLive, 4000);
+  refreshPromoLive();
+
+  // 4. /api/mark
+  async function refreshMarkLive() {
+    try {
+      const r = await fetch('/api/mark?t=' + Date.now(), { cache: 'no-store' });
+      if (r.ok) {
+        const d = await r.json();
+        const amount = Number(d.amount ?? d.value ?? d.mark);
+        const state = String(d.state || (amount > 0 ? 'MARKUP' : amount < 0 ? 'MARKDOWN' : 'STABIL')).toUpperCase();
+        document.getElementById('markLabel').textContent = state + ' :';
+        if (Number.isFinite(amount)) {
+          document.getElementById('markdown').textContent = (amount > 0 ? '+' : '') + fmt(amount);
+        }
+      }
+    } catch (_) {}
+  }
+  setInterval(refreshMarkLive, 10000);
+  refreshMarkLive();
+
+  // 5. /api/history fetcher
+  async function fetchServerHistory() {
+    try {
+      const r = await fetch('/api/history?limit=100&t=' + Date.now(), { cache: 'no-store' });
+      if (r.ok) {
+        const d = await r.json();
+        const items = Array.isArray(d?.items) ? d.items : [];
+        if (items.length > 0) {
+          priceHistory = items.map(item => ({
+            time: item.time || new Date(item.timestamp || Date.now()).toLocaleTimeString('id-ID'),
+            buy: Number(item.buy || currentBuy),
+            sell: Number(item.sell || currentSell),
+            diff: Number(item.buy_change || 0),
+            spread: item.spread || '-3.29',
+            mark: item.mark_amount ? fmt(item.mark_amount) : '-14.200',
+            usd: item.usdIdr || currentUsd,
+            t10: { grams: 10000000 / Number(item.buy || currentBuy), plus: 1542 },
+            t30: { grams: 30000000 / Number(item.buy || currentBuy), plus: 6125 },
+            t40: { grams: 40000000 / Number(item.buy || currentBuy), plus: 8166 },
+            t50: { grams: 50000000 / Number(item.buy || currentBuy), plus: 11708 },
+            t60: { grams: 60000000 / Number(item.buy || currentBuy), plus: 16749 }
+          }));
+          renderHistoryTable();
+        }
+      }
+    } catch (_) {}
+  }
+  fetchServerHistory();
+
+  // 6. Auth Status check (/api/auth/status)
+  async function checkAuthStatus() {
+    try {
+      const r = await fetch('/api/auth/status', { cache: 'no-store' });
+      if (r.ok) {
+        const d = await r.json();
+        if (d.authenticated || d.enabled === false) {
+          document.getElementById('authGate').classList.add('hidden');
+        } else {
+          document.getElementById('authGate').classList.remove('hidden');
+        }
+      }
+    } catch (_) {
+      // If auth API is not enabled/running, hide auth gate smoothly
+      document.getElementById('authGate').classList.add('hidden');
+    }
+  }
+  checkAuthStatus();
+
+  // 3D Switch Toggle (Status Promo otomatis dari server, tidak dapat diubah manual oleh klik)
+  const toggleBtn = document.getElementById('toggleSwitch');
+  const labelBtn = document.getElementById('promo');
+  function updatePromoStatus(st) {
+    isPromoOn = st === 'ON';
+    toggleBtn.className = 'switch-3d-button ' + (isPromoOn ? 'on' : 'off');
+    labelBtn.textContent = isPromoOn ? 'ON' : 'OFF';
+  }
+  // Tombol tidak bisa diubah manual, hanya mengikuti data live server promo
+
+  // Modals Open & Close
+  function openModal(id) { document.getElementById(id).classList.add('open'); }
+  function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+  document.querySelectorAll('[data-close]').forEach(b => {
+    b.onclick = () => closeModal(b.getAttribute('data-close'));
+  });
+  document.querySelectorAll('.modal-backdrop-layer').forEach(bg => {
+    bg.onclick = (e) => { if (e.target === bg) bg.classList.remove('open'); };
+  });
+
+  // Top Nav Click Handlers
+  document.getElementById('btnSuara').onclick = () => openModal('modalSuara');
+  document.getElementById('btnNews').onclick = () => openModal('modalNews');
+  document.getElementById('btnLainnya').onclick = () => openModal('modalLainnya');
+  document.getElementById('btnSoundTest').onclick = () => {
+    playChime(true);
+    setTimeout(() => playChime(false), 300);
+  };
+
+  // Menu Lainnya Handlers
+  document.getElementById('openUbahTampilan').onclick = () => {
+    closeModal('modalLainnya');
+    openModal('modalUbahTampilan');
+  };
+  document.getElementById('openUbahNominal').onclick = () => {
+    closeModal('modalLainnya');
+    [10, 30, 40, 50, 60].forEach(k => {
+      const chk = document.getElementById(`chkNom${k}`);
+      if (chk) chk.checked = nominalConfig[k].enabled;
+    });
+    openModal('modalUbahNominal');
+  };
+
+  // Immediate reactive toggle for nominals
+  [10, 30, 40, 50, 60].forEach(k => {
+    const chk = document.getElementById(`chkNom${k}`);
+    if (chk) {
+      chk.onchange = () => {
+        nominalConfig[k].enabled = chk.checked;
+        localStorage.setItem('treasury_nominal_config', JSON.stringify(nominalConfig));
+        calculateTiers();
+      };
+    }
+  });
+
+  // Sound All On / All Off buttons
+  const sndAllOnBtn = document.getElementById('sndAllOn');
+  const sndAllOffBtn = document.getElementById('sndAllOff');
+  if (sndAllOnBtn) {
+    sndAllOnBtn.onclick = () => {
+      ['sndPriceUp', 'sndHighUp', 'sndPriceDown', 'sndHighDown', 'sndPromoVoice', 'sndCountdown', 'sndVibrate', 'sndShake'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.checked = true;
+      });
+    };
+  }
+  if (sndAllOffBtn) {
+    sndAllOffBtn.onclick = () => {
+      ['sndPriceUp', 'sndHighUp', 'sndPriceDown', 'sndHighDown', 'sndPromoVoice', 'sndCountdown', 'sndVibrate', 'sndShake'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.checked = false;
+      });
+    };
+  }
+
+  document.getElementById('openSuaraMenu').onclick = () => {
+    closeModal('modalLainnya');
+    openModal('modalSuara');
+  };
+
+  document.getElementById('menuIndikator').onclick = () => {
+    closeModal('modalLainnya');
+    document.getElementById('indBB').checked = selectedIndicators.includes('bb');
+    document.getElementById('indMA').checked = selectedIndicators.includes('ma');
+    document.getElementById('indEMA').checked = selectedIndicators.includes('ema');
+    document.getElementById('indVWAP').checked = selectedIndicators.includes('vwap');
+    document.getElementById('indRSI').checked = selectedIndicators.includes('rsi');
+    openModal('modalIndikator');
+  };
+
+  // Immediate indicator reload on change
+  ['indBB', 'indMA', 'indEMA', 'indVWAP', 'indRSI', 'indMACD', 'indStoch', 'indATR', 'indVol', 'indIchimoku'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.onchange = () => {
+        const nextInd = [];
+        if (document.getElementById('indBB')?.checked) nextInd.push('bb');
+        if (document.getElementById('indMA')?.checked) nextInd.push('ma');
+        if (document.getElementById('indEMA')?.checked) nextInd.push('ema');
+        if (document.getElementById('indVWAP')?.checked) nextInd.push('vwap');
+        if (document.getElementById('indRSI')?.checked) nextInd.push('rsi');
+        selectedIndicators = nextInd;
+        localStorage.setItem('treasury_indicators_sel', JSON.stringify(nextInd));
+        initTradingView();
+      };
+    }
+  });
+
+  // Ubah Tampilan Controls
+  document.getElementById('btnBorderPlus').onclick = () => {
+    appearanceConfig.borderWidth = Math.min(6, appearanceConfig.borderWidth + 1);
+    applyAppearance();
+  };
+  document.getElementById('btnBorderMinus').onclick = () => {
+    appearanceConfig.borderWidth = Math.max(0, appearanceConfig.borderWidth - 1);
+    applyAppearance();
+  };
+  document.getElementById('btnScalePlus').onclick = () => {
+    appearanceConfig.cardScale = Math.min(150, appearanceConfig.cardScale + 5);
+    applyAppearance();
+  };
+  document.getElementById('btnScaleMinus').onclick = () => {
+    appearanceConfig.cardScale = Math.max(70, appearanceConfig.cardScale - 5);
+    applyAppearance();
+  };
+  document.getElementById('btnFontPricePlus').onclick = () => {
+    appearanceConfig.fontPriceScale = Math.min(150, appearanceConfig.fontPriceScale + 5);
+    applyAppearance();
+  };
+  document.getElementById('btnFontPriceMinus').onclick = () => {
+    appearanceConfig.fontPriceScale = Math.max(70, appearanceConfig.fontPriceScale - 5);
+    applyAppearance();
+  };
+  document.getElementById('btnFontNomPlus').onclick = () => {
+    appearanceConfig.fontNominalScale = Math.min(150, appearanceConfig.fontNominalScale + 5);
+    applyAppearance();
+  };
+  document.getElementById('btnFontNomMinus').onclick = () => {
+    appearanceConfig.fontNominalScale = Math.max(70, appearanceConfig.fontNominalScale - 5);
+    applyAppearance();
+  };
+  document.getElementById('btnResetTampilan').onclick = () => {
+    appearanceConfig = { borderWidth: 1, cardScale: 100, fontPriceScale: 100, fontNominalScale: 100 };
+    applyAppearance();
+  };
+
+  // Ubah Nominal Handlers
+  document.getElementById('btnBatalNominal').onclick = () => closeModal('modalUbahNominal');
+  document.getElementById('btnSimpanNominal').onclick = () => {
+    [10, 30, 40, 50, 60].forEach(k => {
+      nominalConfig[k].enabled = document.getElementById(`chkNom${k}`).checked;
+      const numVal = parseInt(document.getElementById(`inpNom${k}`).value) || nominalConfig[k].val;
+      nominalConfig[k].val = numVal;
+    });
+    localStorage.setItem('treasury_nominal_config', JSON.stringify(nominalConfig));
+    calculateTiers();
+    closeModal('modalUbahNominal');
+  };
+
+  // Calculator logic
+  const calcInput = document.getElementById('calcInput');
+  const calcOutput = document.getElementById('calcOutput');
+  function calcGold() {
+    const val = parseFloat(calcInput.value.replace(/[^0-9.]/g, '')) || 0;
+    calcOutput.textContent = (currentBuy > 0 ? (val / currentBuy).toFixed(4) : '0.0000') + ' gr';
+  }
+  calcInput.oninput = calcGold;
+
+  // Tier pill click opens calculator
+  document.querySelectorAll('.tier-pill-box').forEach(pill => {
+    pill.onclick = () => {
+      const nom = pill.dataset.nom;
+      openModal('modalCalc');
+      document.getElementById('cBuyVal').textContent = 'Rp ' + fmt(currentBuy);
+      document.getElementById('cSellVal').textContent = 'Rp ' + fmt(currentSell);
+      calcInput.value = nom;
+      calcGold();
+    };
+  });
+
+  // Export CSV
+  document.getElementById('btnExportCsv').onclick = () => {
+    if (!priceHistory.length) {
+      alert('Belum ada data riwayat untuk di-export.');
+      return;
+    }
+    const headers = ['Waktu', 'Beli', 'Jual', 'Spread', 'Mark', 'USD/IDR'];
+    const rows = priceHistory.map(r => [r.time, r.buy, r.sell, r.spread + '%', r.mark, r.usd]);
+    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', `riwayat_harga_treasury_${Date.now()}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  document.getElementById('btnClearHistory').onclick = () => {
+    priceHistory = [];
+    renderHistoryTable();
+  };
+
+  // Voucher Copy
+  document.querySelectorAll('.btnCopyCode').forEach(btn => {
+    btn.onclick = () => {
+      navigator.clipboard.writeText(btn.dataset.code);
+      const old = btn.textContent;
+      btn.textContent = '✓';
+      setTimeout(() => btn.textContent = old, 1500);
+    };
+  });
+
+  // Token Monitoring Treasury connect (/api/promo-session)
+  (function initPromoToken() {
+    const inp = document.getElementById('tsTokenInput');
+    const btn = document.getElementById('tsTokenSaveBtn');
+    const msg = document.getElementById('tsTokenMsg');
+    if (!btn || !inp) return;
+
+    fetch('/api/promo-session').then(r => r.json()).then(d => {
+      if (d.has_token && msg) {
+        msg.textContent = '🟢 Terhubung: ' + d.preview + ' (Deteksi otomatis aktif)';
+        msg.style.color = '#22c55e';
+      }
+    }).catch(() => {});
+
+    btn.onclick = async () => {
+      const val = (inp.value || '').trim();
+      if (!val) return;
+      btn.disabled = true;
+      btn.textContent = '...';
+      try {
+        const res = await fetch('/api/promo-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token: val })
+        });
+        const data = await res.json();
+        if (data.success && msg) {
+          msg.textContent = '🟢 Terhubung: ' + data.preview + ' (Deteksi otomatis aktif)';
+          msg.style.color = '#22c55e';
+          inp.value = '';
+        }
+      } catch (_) {
+        if (msg) {
+          msg.textContent = 'Gagal menyimpan token.';
+          msg.style.color = '#ef4444';
+        }
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Sambungkan';
+      }
+    };
+  })();
+
+  // TradingView Advanced Chart (TVC:GOLD) with indicator configuration
+  function initTradingView() {
+    const box = document.getElementById('tv');
+    if (!box) return;
+    box.innerHTML = '';
+
+    const studyMap = {
+      bb: 'BB@tv-basicstudies',
+      ma: 'MASimple@tv-basicstudies',
+      ema: 'MAExp@tv-basicstudies',
+      vwap: 'VWAP@tv-basicstudies',
+      rsi: 'RSI@tv-basicstudies'
+    };
+
+    const studies = selectedIndicators.map(k => studyMap[k]).filter(Boolean);
+
+    const widgetContainer = document.createElement('div');
+    widgetContainer.className = 'tradingview-widget-container';
+    widgetContainer.style.height = '100%';
+    widgetContainer.style.width = '100%';
+
+    const widgetDiv = document.createElement('div');
+    widgetDiv.className = 'tradingview-widget-container__widget';
+    widgetDiv.style.height = '100%';
+    widgetDiv.style.width = '100%';
+    widgetContainer.appendChild(widgetDiv);
+
+    const s = document.createElement('script');
+    s.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
+    s.type = 'text/javascript';
+    s.async = true;
+    s.innerHTML = JSON.stringify({
+      autosize: true,
+      symbol: 'TVC:GOLD',
+      interval: '1',
+      timezone: 'Asia/Jakarta',
+      theme: isLightMode ? 'light' : 'dark',
+      style: '1',
+      locale: 'id',
+      backgroundColor: isLightMode ? 'rgba(255, 255, 255, 1)' : 'rgba(13, 17, 23, 1)',
+      gridColor: isLightMode ? 'rgba(226, 232, 240, 0.8)' : 'rgba(35, 44, 61, 0.4)',
+      hide_side_toolbar: false,
+      allow_symbol_change: true,
+      save_image: true,
+      calendar: false,
+      studies: studies,
+      support_host: 'https://www.tradingview.com'
+    });
+    widgetContainer.appendChild(s);
+    box.appendChild(widgetContainer);
+  }
+  initTradingView();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1916 @@
+<!doctype html>
+<html lang="id">
+<head>
+<link rel="icon" type="image/png" href="/treasury-pink.png">
+<link rel="apple-touch-icon" href="/treasury-pink.png">
+
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GOLD</title>
+<style>
+:root{--bg:#030405;--panel:#08090a;--line:#742329;--text:#f7f7f7;--muted:#90949a;--green:#39df8b;--red:#ff6c74;--blue:#64adff;--gold:#f2b633}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,Segoe UI,Arial,sans-serif}body{min-height:100vh}.page{max-width:1760px;margin:auto;padding:28px 20px}
+.top{height:64px;border:2px solid var(--line);border-radius:6px;background:#08090a;display:flex;align-items:center;justify-content:space-between;padding:0 22px}.brand{font-weight:800;font-size:19px;display:flex;align-items:center;gap:11px}.logo{width:29px;height:29px;position:relative}.logo:before{content:"";position:absolute;left:0;bottom:2px;width:19px;height:17px;background:#c57c05;border-radius:2px}.logo:after{content:"";position:absolute;right:0;top:0;width:17px;height:12px;background:#34d88a;border-radius:8px 2px}.icons{display:flex;gap:22px;font-size:21px;color:#c8cbd1}
+.board{margin-top:18px;border:2px solid var(--line);border-radius:6px;overflow:hidden;background:var(--panel)}.summary{padding:18px 24px 20px}.quotes{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}.card{min-width:222px;height:74px;background:#0b0d0f;border:2px solid #30343a;border-radius:6px;padding:10px 12px;position:relative}.buy{border-top-color:var(--green)}.sell{border-top-color:#4b9dff}.usd{border-top-color:#c579ff}.label{font-size:14px;font-weight:900;letter-spacing:.5px;margin-bottom:6px}.buy .label{color:var(--green)}.sell .label{color:#7bb8ff}.usd .label{color:#ce94ff}.value{font-size:20px;font-weight:900}.value.red{color:var(--red)}.value.blue{color:var(--blue)}.rp{font-size:13px;color:#ad6c70;margin-right:4px}.delta{position:absolute;right:10px;bottom:10px;background:#512329;color:var(--red);padding:6px 10px;border-radius:5px;font-size:20px;font-weight:900}
+.tiers{display:grid;grid-template-columns:repeat(5,minmax(180px,1fr));gap:8px;margin-top:14px}.tier{min-height:48px;border:2px solid #8b2b31;border-radius:6px;background:#090a0b;display:flex;align-items:center;justify-content:center;gap:10px;padding:8px 12px}.nom{color:var(--gold);font-weight:900}.gram{font-weight:900;font-size:17px}.plus{background:#103a27;color:var(--green);padding:5px 9px;border-radius:5px;font-weight:900;font-size:17px}
+.status{margin-top:32px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:14px}.hl{justify-self:end;width:185px;display:flex;flex-direction:column;gap:7px}.hlb{border:1px solid #274d3d;border-left:3px solid var(--green);background:#102419;border-radius:5px;padding:7px 10px;font-size:13px;font-weight:800}.hlb.low{border-color:#553034;border-left-color:var(--red);background:#241417}.hlb span{float:right;font-size:16px}.clock{width:332px;height:96px;border:2px solid #852d33;border-radius:7px;background:#111316;display:flex;align-items:center;justify-content:center;gap:18px;padding:12px 18px}.time{font-size:31px;font-weight:900;letter-spacing:2px}.m{color:#ffb329}.s{color:#35d98b}.date{font-weight:700;font-size:17px;color:#ddd;margin-top:4px}.badge{min-width:84px;height:34px;border-radius:18px;background:linear-gradient(#ff737c,#e92b38);box-shadow:0 0 14px rgba(255,61,75,.5);display:flex;align-items:center;gap:8px;padding:4px 10px;font-weight:900}.badge:before{content:"";width:11px;height:11px;border-radius:50%;background:#fff;box-shadow:0 0 8px #fff}.metrics{justify-self:start;width:150px;display:flex;flex-direction:column;gap:7px}.metric{border:1px solid #6b5321;border-left:3px solid var(--gold);border-radius:5px;background:#221d0d;padding:7px 10px;font-size:13px;font-weight:800}.metric b{float:right;color:var(--gold);font-size:16px}.metric.sp{border-color:#2b553e;border-left-color:var(--green);background:#102419}.metric.sp b{color:var(--green)}
+.chart{height:520px;border-top:1px solid #222;background:#0d1117}.tv{height:100%;width:100%}
+@media(max-width:1100px){.tiers{grid-template-columns:repeat(2,1fr)}.status{grid-template-columns:1fr}.hl,.metrics,.clock{justify-self:center;width:332px}}@media(max-width:620px){.page{padding:10px}.tiers{grid-template-columns:1fr}.card{flex:1;min-width:calc(50% - 8px)}.hl,.metrics,.clock{width:100%}}
+
+/* interactive header/menu/settings */
+.icon-btn{background:transparent;border:0;color:#c8cbd1;font:inherit;font-size:22px;cursor:pointer;padding:8px;border-radius:8px;position:relative}.icon-btn:hover{background:#151719;color:#fff}.notif-dot{position:absolute;right:3px;top:1px;min-width:17px;height:17px;border-radius:10px;background:#e93442;color:#fff;font-size:10px;font-weight:900;display:grid;place-items:center}.menu-wrap{position:relative}.menu{display:none;position:absolute;right:0;top:48px;width:285px;background:#111314;border:1px solid #2c2f33;border-radius:18px;overflow:hidden;z-index:50;box-shadow:0 18px 50px #000b}.menu.open{display:block}.menu-item{display:flex;align-items:center;gap:14px;padding:16px 20px;color:#d7d8db;font-size:17px;cursor:pointer;border:0;background:transparent;width:100%;text-align:left}.menu-item:hover{background:#181b1d}.menu-item.install{color:#44df8c;background:#0c2719;font-weight:800}.menu-item.logout{color:#ff6e76;border-top:1px solid #2b2e31}.mi{width:26px;text-align:center;font-size:20px}.modal-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:90;align-items:center;justify-content:center;padding:20px}.modal-backdrop.open{display:flex}.modal{width:min(570px,96vw);max-height:88vh;overflow:auto;background:#0d0f10;border:1px solid #303337;border-radius:20px;box-shadow:0 24px 80px #000}.modal.small{width:min(390px,96vw)}.modal-head{display:flex;align-items:center;justify-content:space-between;padding:20px 26px;border-bottom:1px solid #25282b;font-size:21px;font-weight:900}.modal-head.orange{color:#ff9e16}.xbtn{border:1px solid #34373b;background:#191b1d;color:#b7bbc0;width:42px;height:42px;border-radius:12px;font-size:23px;cursor:pointer}.modal-body{padding:20px 26px}.setting-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:16px 0;border-bottom:1px solid #212427}.setting-title{font-weight:800;font-size:17px}.setting-sub{color:#7f858d;font-size:14px;margin-top:5px}.arrow{font-size:25px;color:#77808a}.control-line{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 0;border-bottom:1px solid #212427}.control-label{font-weight:800;color:#8e959e;min-width:150px}.step{display:flex;align-items:center;gap:10px}.step button,.nom-btn{width:36px;height:36px;border:1px solid #3a3d41;background:#1a1c1e;color:#fff;border-radius:8px;font-size:19px;cursor:pointer}.step strong{color:#ff9e16;min-width:54px;text-align:center}.reset-link{color:#9ca1a8;text-decoration:underline;cursor:pointer}.default-btn{margin-top:16px;width:100%;padding:12px;border:1px solid #a86b00;background:#2b1a06;color:#ff9e16;border-radius:10px;font-weight:800;font-size:16px;cursor:pointer}.nom-list{display:flex;flex-direction:column;gap:12px}.nom-row{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;background:#17191b;border:1px solid #303338;border-radius:16px}.nom-left{display:flex;align-items:center;gap:13px;font-size:20px}.nom-check{width:27px;height:27px;accent-color:#ff9e16}.disc{color:#818894}.modal-actions{display:grid;grid-template-columns:1fr 1.15fr;gap:14px;margin-top:22px}.modal-actions button{height:55px;border-radius:11px;font-weight:900;font-size:18px;cursor:pointer}.cancel{background:#191b1d;border:1px solid #3a3d40;color:#a8adb3}.save{background:#432705;border:1px solid #a76700;color:#ff9e16}.list-cards{display:flex;flex-direction:column;gap:10px}.news-card{padding:14px 15px;background:#151719;border:1px solid #2b2e31;border-radius:12px}.news-card .impact{font-size:12px;font-weight:900;text-transform:uppercase;margin-bottom:5px}.impact.high{color:#ff6c74}.impact.medium{color:#f3b43d}.news-card .when{color:#8d939a;font-size:13px;margin-top:5px}.promo-card{display:block;color:#e5e7ea;text-decoration:none;padding:14px;background:#151719;border:1px solid #2b2e31;border-radius:12px}.promo-card:hover{border-color:#77551c}.promo-card .pdate{color:#8d939a;font-size:13px;margin-top:6px}.promo-status-line{display:flex;align-items:center;gap:10px;padding:12px 14px;background:#151719;border-radius:12px;margin-bottom:14px}.promo-pill{padding:5px 10px;border-radius:14px;font-weight:900;background:#4a2025;color:#ff6d75}.promo-pill.on{background:#123b29;color:#3ce28e}.promo-pill.unknown{background:#4a3b12;color:#ffd95a}
+/* price move flash */
+@keyframes flashUp{0%,100%{border-color:inherit;box-shadow:none}25%,65%{border-color:#35e08b;box-shadow:0 0 12px rgba(53,224,139,.85),inset 0 0 6px rgba(53,224,139,.25)}}
+@keyframes flashDown{0%,100%{border-color:inherit;box-shadow:none}25%,65%{border-color:#ff4f5b;box-shadow:0 0 12px rgba(255,79,91,.85),inset 0 0 6px rgba(255,79,91,.25)}}
+.price-up .top,.price-up .board,.price-up .card,.price-up .tier,.price-up .hlb,.price-up .clock,.price-up .metric{animation:flashUp .75s ease 2}.price-down .top,.price-down .board,.price-down .card,.price-down .tier,.price-down .hlb,.price-down .clock,.price-down .metric{animation:flashDown .75s ease 2}
+body.light{--bg:#f3f5f7;--panel:#fff;--text:#111}.light .top,.light .board,.light .card,.light .tier,.light .clock,.light .metric,.light .hlb{background:#fff;color:#111}.light .chart{filter:brightness(1.08)}
+
+/* ===== FINAL NEON DASHBOARD LAYOUT ===== */
+:root{--pink:#ff4fa8;--purple:#b963ff;--cyan:#59b7ff;--danger:#ff3d4f}
+.page{max-width:1800px;padding:0 0 18px}.top{height:92px;border:1px solid #30363d;border-bottom-color:#5bb8ff;border-radius:0 0 6px 6px;padding:0 28px;background:linear-gradient(90deg,#07090b 0%,#0b0d0f 55%,#060708 100%)}
+.brand{gap:14px}.logo{width:74px;height:60px;border:3px solid #ff61d6;border-radius:8px;filter:drop-shadow(0 0 8px rgba(255,79,198,.35))}.logo:before{left:8px;top:18px;width:42px;height:3px;background:#ff62d7;box-shadow:0 -10px 0 -1px #ff62d7,10px 9px 0 -1px #ff62d7;transform:skewX(-22deg)}.logo:after{width:26px;height:26px;right:-8px;bottom:-7px;top:auto;border:3px solid #ff62d7;border-radius:50%;background:transparent}.brand-title{font-size:29px;line-height:1;font-weight:1000;letter-spacing:-.5px}.brand-title span{color:#ff67d7}.brand-sub{margin-top:6px;color:#b9bdc3;font-size:12px;font-weight:800;letter-spacing:.8px}
+.icons{gap:20px}.icon-btn{font-size:30px;min-width:48px}.icon-btn:nth-child(1){color:#58adff}.icon-btn#newsBtn{color:#b460ff}.icon-btn#promoBtn{color:#25e4aa}.icon-btn[title="Perbandingan"]{color:#f4b82f}.notif-dot{right:0;top:-2px}
+.board{margin-top:0;border:0;border-radius:0;background:#040506}.summary{padding:20px 35px 25px}.quote-zone{position:relative;display:flex;align-items:center;justify-content:center}.quotes{gap:18px;flex-wrap:nowrap;width:min(1160px,100%)}.card{height:110px;min-width:0;flex:1;border-width:2px;border-radius:8px;padding:15px 18px;background:linear-gradient(145deg,#080a0d,#0c0f12)}.buy{border-color:#ff5f73}.sell{border-color:#57adff}.usd{border-color:#b760e7}.label{font-size:21px;margin-bottom:11px}.buy .label{color:#2ff29a}.sell .label{color:#58adff}.usd .label{color:#b768e7}.value{font-size:33px;line-height:1;font-weight:1000;color:#f5f6f7}.rp{font-size:20px;color:#f0f0f0}.delta{right:16px;bottom:19px;font-size:26px;padding:7px 12px;border:1px solid rgba(255,80,90,.5)}.limit-metric{border-color:#6b5321!important;border-left-color:#f2b633!important;background:#221d0d!important}.limit-metric b{color:#ffb22b!important}
+.tiers{gap:12px;margin-top:20px}.tier{min-height:62px;border-color:#0c7737;border-radius:7px;background:linear-gradient(180deg,#08110b,#070a08);padding:10px 15px}.nom{font-size:18px!important}.gram{font-size:19px!important}.plus{font-size:19px!important;background:#0a4929;color:#4df0a0;padding:6px 10px}
+.status{margin-top:22px;grid-template-columns:1fr 430px 1fr;grid-template-areas:"metrics clock hl";gap:22px}.metrics{grid-area:metrics;justify-self:end;width:245px;gap:10px}.hl{grid-area:hl;justify-self:start;width:245px;gap:10px}.clock{grid-area:clock;width:430px;height:132px;border-color:#aab8c6;background:#090b0e;box-shadow:0 0 16px rgba(98,177,255,.12);padding:14px 24px}.time{font-size:48px;letter-spacing:1px;line-height:1}.time .h{color:#fff}.time .m{color:#ff4fa8}.time .s{color:#ff3847}.time .sep{color:#d8dce0;margin:0 6px}.date{text-align:center;margin-top:15px;font-size:23px;color:#fff}.badge{display:none}.metric,.hlb{font-size:14px;padding:10px 13px}.metric b,.hlb span{font-size:18px}.chart{height:560px;border:2px solid #222;border-top-color:#2e343b;background:#0d1117}
+.market-up #buy,.market-up #sell{color:#36e68c}.market-down #buy,.market-down #sell{color:#ff4d5d}.market-up #buyDelta,.market-up #sellDelta{color:#42ee96;background:#103b28;border-color:#1c7448}.market-down #buyDelta,.market-down #sellDelta{color:#ff6671;background:#4a1e24;border-color:#8a3039}
+@keyframes flashUpAll{0%,100%{box-shadow:var(--base-shadow,none)}35%,70%{border-color:#34ed91!important;box-shadow:0 0 18px rgba(52,237,145,.95),inset 0 0 10px rgba(52,237,145,.18)}}
+@keyframes flashDownAll{0%,100%{box-shadow:var(--base-shadow,none)}35%,70%{border-color:#ff4352!important;box-shadow:0 0 18px rgba(255,67,82,.95),inset 0 0 10px rgba(255,67,82,.18)}}
+.flash-up .top,.flash-up .board,.flash-up .summary,.flash-up .card,.flash-up .tier,.flash-up .flash-up .hlb,.flash-up .clock,.flash-up .metric,.flash-up .chart{animation:flashUpAll .58s ease 2}.flash-down .top,.flash-down .board,.flash-down .summary,.flash-down .card,.flash-down .tier,.flash-down .flash-down .hlb,.flash-down .clock,.flash-down .metric,.flash-down .chart{animation:flashDownAll .58s ease 2}
+@media(max-width:1200px){.quotes{gap:8px}.status{grid-template-columns:1fr;grid-template-areas:"clock" "metrics" "hl"}.metrics,.hl{justify-self:center}.clock{justify-self:center}.brand-title{font-size:23px}}
+@media(max-width:760px){.top{height:74px;padding:0 10px}.logo{width:48px;height:42px}.brand-title{font-size:19px}.brand-sub{display:none}.icons{gap:3px}.icon-btn{font-size:21px;min-width:38px}.summary{padding:12px}.quote-zone{display:block}.quotes{display:grid;grid-template-columns:1fr 1fr;gap:8px}.card{height:86px;padding:10px}.usd{grid-column:1/-1}.label{font-size:15px}.value{font-size:22px}.rp{font-size:14px}.delta{font-size:17px;right:9px;bottom:11px}.tiers{grid-template-columns:1fr}.clock{width:100%;height:105px}.time{font-size:37px}.date{font-size:17px}.chart{height:480px}}
+
+/* ===== LATEST INTERACTION REFINEMENTS ===== */
+.clock{justify-content:space-between}.clock-main{flex:1;text-align:center}.clock-indicator{display:flex;flex-direction:column;align-items:center;gap:7px;min-width:104px}.clock-indicator-label{font-size:10px;font-weight:900;color:#8f969e;letter-spacing:.8px}.badge{display:flex!important}
+
+/* ==================== EFEK INDIKATOR ON NYALA & KEDIP-KEDIP NEON ==================== */
+@keyframes neonGlowPulse {
+  0%, 100% {
+    background: linear-gradient(135deg, #18e678, #05b854);
+    box-shadow: 0 0 14px rgba(35, 230, 120, 0.75), 0 0 28px rgba(35, 230, 120, 0.4), inset 0 0 6px rgba(255, 255, 255, 0.4);
+    filter: brightness(1);
+    transform: scale(1);
+  }
+  50% {
+    background: linear-gradient(135deg, #4fff9d, #1fe87d);
+    box-shadow: 0 0 26px rgba(79, 255, 157, 0.98), 0 0 50px rgba(35, 230, 120, 0.85), 0 0 75px rgba(35, 230, 120, 0.45), inset 0 0 10px #ffffff;
+    filter: brightness(1.3);
+    transform: scale(1.06);
+  }
+}
+
+@keyframes dotBlinkGlow {
+  0%, 100% {
+    opacity: 0.4;
+    transform: scale(0.85);
+    box-shadow: 0 0 4px #ffffff;
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.25);
+    box-shadow: 0 0 12px #ffffff, 0 0 20px #55ff99;
+  }
+}
+
+.badge.on {
+  background: linear-gradient(135deg, #18e678, #05b854) !important;
+  color: #ffffff !important;
+  font-weight: 1000 !important;
+  letter-spacing: 0.5px !important;
+  text-shadow: 0 0 6px rgba(0, 0, 0, 0.8), 0 0 10px rgba(255, 255, 255, 0.8) !important;
+  border: 1px solid rgba(255, 255, 255, 0.5) !important;
+  animation: neonGlowPulse 0.9s ease-in-out infinite !important;
+}
+
+.badge.on:before {
+  background: #ffffff !important;
+  animation: dotBlinkGlow 0.7s ease-in-out infinite !important;
+}
+
+.badge.unknown{background:linear-gradient(#ffd95a,#d9a900);color:#171300;box-shadow:0 0 14px rgba(255,210,50,.48)}
+
+/* filtered nominal cards stay centered */
+.tiers.filtered{display:flex;justify-content:center;flex-wrap:wrap}.tiers.filtered .tier{flex:0 1 320px;min-width:240px;max-width:360px}
+/* News layout - Exact match with user screenshot */
+.news-modal{width:min(580px,96vw);background:#0a0c0e!important;border:1px solid #1f2429!important;border-radius:24px!important;padding:6px 4px 14px!important;box-shadow:0 24px 60px rgba(0,0,0,0.85)!important}
+.news-modal .modal-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 14px;border-bottom:none!important;font-size:20px;font-weight:900;color:#ffffff;letter-spacing:-0.2px}
+.news-modal .modal-head .head-left{display:flex;align-items:center;gap:10px}
+.news-modal .modal-head .head-icon{display:inline-flex;align-items:center;justify-content:center;color:#f2b633;font-size:20px}
+.news-modal .xbtn{width:36px;height:36px;border-radius:10px;background:#181c20;border:1px solid #282e34;color:#9ca3af;font-size:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:0.15s}
+.news-modal .xbtn:hover{background:#222830;color:#ffffff}
+.news-modal .modal-body{padding:0 16px 10px!important}
+.news-impact-filters{display:flex;align-items:center;gap:10px;margin-bottom:18px;padding:0 4px}
+.impact-filter-pill{display:inline-flex;align-items:center;gap:8px;padding:7px 16px;border-radius:12px;background:#14171a;border:1px solid #2a2f35;font-size:13.5px;font-weight:800;cursor:pointer;transition:all 0.15s;user-select:none}
+.impact-filter-pill.active{border-color:currentColor}
+.impact-filter-pill.low{color:#ffd043;border-color:rgba(255,208,67,0.35);background:#1a1708}
+.impact-filter-pill.medium{color:#ff991f;border-color:rgba(255,153,31,0.35);background:#1d1405}
+.impact-filter-pill.high{color:#ff4f5e;border-color:rgba(255,79,94,0.35);background:#1f090b}
+.impact-filter-pill.inactive{opacity:0.4;background:#121417;border-color:#22262c;color:#78808a}
+.bars-icon{display:inline-flex;align-items:center;gap:2.5px}
+.bars-icon span{width:3.5px;height:14px;border-radius:2px;background:#353b42}
+.bars-icon.low span:nth-child(1){background:#ffd043}
+.bars-icon.medium span:nth-child(1),.bars-icon.medium span:nth-child(2){background:#ff991f}
+.bars-icon.high span{background:#ff4f5e}
+.news-day-header{display:flex;align-items:center;gap:8px;color:#ffae19;font-size:14.5px;font-weight:900;letter-spacing:0.5px;margin:20px 4px 12px;text-transform:uppercase}
+.news-day-header svg,.news-day-header i{color:#ffae19;font-size:16px}
+.news-card-item{position:relative;background:#0d1114;border:1.5px solid #1c2227;border-radius:20px;padding:16px 18px;margin-bottom:12px;display:flex;gap:14px;transition:all 0.15s}
+.news-card-item.upcoming{background:#081410;border-color:#0b4e33}
+.news-card-item.past{opacity:0.62;background:#0b0e10;border-color:#161a1e}
+.news-card-bars{padding-top:2px;display:flex;gap:2.5px}
+.news-card-bars span{width:4px;height:16px;border-radius:2px;background:#2a3036}
+.news-card-bars.low span:nth-child(1){background:#ffd043}
+.news-card-bars.medium span:nth-child(1),.news-card-bars.medium span:nth-child(2){background:#ff991f}
+.news-card-bars.high span{background:#ff4f5e}
+.news-card-content{flex:1;min-width:0}
+.news-card-title-row{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.news-card-title{font-size:15.5px;font-weight:900;color:#ffffff;line-height:1.35;letter-spacing:-0.2px}
+.news-card-item.past .news-card-title{color:#9ca3af}
+.news-card-meta{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:6px;font-size:13px;color:#808994}
+.news-card-meta span{display:inline-flex;align-items:center;gap:5px}
+.news-cd-badge{display:inline-block;padding:2px 9px;border-radius:6px;background:#093322;color:#2be289;font-size:12px;font-weight:800;letter-spacing:0.2px}
+.news-signal-pill{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:8px;font-size:12px;font-weight:900;white-space:nowrap}
+.news-signal-pill.up{background:#0b3622;color:#35e08b;border:1px solid #166e43}
+.news-signal-pill.down{background:#381317;color:#ff5260;border:1px solid #73222a}
+.news-signal-pill.wait{background:#231a08;color:#ffd043;border:1px solid #6b510c}
+.news-card-numbers{display:flex;align-items:center;gap:12px;margin-top:7px;font-size:13px;color:#9ca3af;font-weight:600}
+.news-card-numbers b{color:#d1d5db;font-weight:800}
+
+/* calculator */
+.calculator-modal{width:min(640px,96vw)}.calc-prices{display:grid;grid-template-columns:1fr 1fr;gap:14px}.calc-price{border:2px solid #303235;border-radius:18px;padding:22px;text-align:center;background:#151616}.calc-price.active{border-color:#ff9800;background:#251705}.calc-price span{color:#9298a0}.calc-price b{display:block;margin-top:8px;font-size:24px}.calc-price.active b{color:#ff9913}.calc-tabs{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:30px}.calc-tabs button{height:64px;border-radius:14px;border:1px solid #35373a;background:#151616;color:#9ba1a8;font-weight:900;font-size:18px}.calc-tabs button.active{border-color:#a76500;background:#2b1b05;color:#ff9b12}.calc-label{display:block;margin:32px 0 10px;color:#9299a2;font-weight:800}.calc-input{width:100%;height:76px;border:1px solid #36383b;border-radius:17px;background:#171818;color:#fff;font-size:22px;padding:0 24px;outline:0}.calc-result{margin-top:20px;border:1px solid #34373a;border-radius:14px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between}.calc-result span{color:#8f969e}.calc-result b{font-size:24px;color:#ff9a13}
+/* indicator settings */
+.indicator-modal{width:min(760px,96vw)}.indicator-help{color:#979ea7;line-height:1.45}.indicator-list{display:flex;flex-direction:column;gap:14px;margin-top:20px}.indicator-row{position:relative;min-height:106px;border:1px solid #34373a;border-radius:20px;background:#161717;padding:22px 95px 20px 60px;display:block}.indicator-row:has(.indicator-check:checked){background:#071d11;border-color:#0b733e}.indicator-row>span:first-child{display:block}.indicator-row b{display:block;font-size:20px}.indicator-row small{display:block;color:#8d959d;margin-top:8px}.indicator-row .dot{position:absolute;left:24px;top:34px;width:18px;height:18px;border-radius:5px;background:#249cf0}.indicator-row .dot.ema{background:#19bdd0}.indicator-row .dot.bb{background:#a724b9}.indicator-row .dot.vwap{background:#ff9500}.indicator-row .dot.rsi{background:#eb1c67}.recommend{position:absolute;left:285px;top:22px;border:1px solid #775300;color:#aaa077;background:#261d07;padding:4px 8px;border-radius:7px;font-size:12px;font-weight:900}.indicator-check{position:absolute;opacity:0;pointer-events:none}.toggle-ui{position:absolute;right:24px;top:35px;width:66px;height:36px;border-radius:20px;background:#303235;border:1px solid #505358}.toggle-ui:before{content:'';position:absolute;width:29px;height:29px;left:3px;top:2px;border-radius:50%;background:#fff;transition:.18s}.indicator-check:checked + .toggle-ui{background:#14bd64;border-color:#1cdc78}.indicator-check:checked + .toggle-ui:before{transform:translateX(29px)}
+/* price movement: only a short TOP border segment flashes, never the whole border */
+@keyframes topSegUp{0%,100%{opacity:0;transform:translateX(-50%) scaleX(.25)}35%,70%{opacity:1;transform:translateX(-50%) scaleX(1);box-shadow:0 0 13px #36e68c}}@keyframes topSegDown{0%,100%{opacity:0;transform:translateX(-50%) scaleX(.25)}35%,70%{opacity:1;transform:translateX(-50%) scaleX(1);box-shadow:0 0 13px #ff4d5d}}
+.top,.card,.tier,.hlb,.clock,.metric,.chart{position:relative}.top:after,.card:after,.tier:after,.hlb:after,.clock:after,.metric:after,.chart:after{content:'';position:absolute;z-index:20;left:50%;top:-2px;width:46%;height:3px;border-radius:4px;opacity:0;pointer-events:none}.flash-up .top:after,.flash-up .card:after,.flash-up .tier:after,.flash-up .hlb:after,.flash-up .clock:after,.flash-up .metric:after,.flash-up .chart:after{background:#36e68c;animation:topSegUp .58s ease 2}.flash-down .top:after,.flash-down .card:after,.flash-down .tier:after,.flash-down .hlb:after,.flash-down .clock:after,.flash-down .metric:after,.flash-down .chart:after{background:#ff4d5d;animation:topSegDown .58s ease 2}
+.flash-up .top,.flash-up .board,.flash-up .summary,.flash-up .card,.flash-up .tier,.flash-up .flash-up .hlb,.flash-up .clock,.flash-up .metric,.flash-up .chart,.flash-down .top,.flash-down .board,.flash-down .summary,.flash-down .card,.flash-down .tier,.flash-down .flash-down .hlb,.flash-down .clock,.flash-down .metric,.flash-down .chart{animation:none!important}
+@media(max-width:760px){.clock{gap:8px}.clock-indicator{min-width:80px}.calc-prices{grid-template-columns:1fr}.indicator-row{padding-left:55px}.recommend{position:static;display:inline-block;margin-top:8px}}
+
+</style>
+
+<style id="market-style-v5">
+.card.buy{border:2px solid #35e08b!important;box-shadow:0 0 0 1px rgba(53,224,139,.05) inset}
+.card.sell{border:2px solid #53aaff!important;box-shadow:0 0 0 1px rgba(83,170,255,.05) inset}
+.card.usd{border:2px solid #d16cff!important;box-shadow:0 0 0 1px rgba(209,108,255,.05) inset}
+.card.buy .label{color:#35e08b!important}.card.sell .label{color:#53aaff!important}.card.usd .label{color:#d16cff!important}
+.market-up #buy,.market-up #sell{color:#35e08b!important}.market-down #buy,.market-down #sell{color:#ff5865!important}
+@keyframes pulseUpV5{0%,100%{box-shadow:0 0 0 rgba(53,224,139,0)}25%,70%{box-shadow:0 0 18px rgba(53,224,139,.95),inset 0 0 8px rgba(53,224,139,.18)}}
+@keyframes pulseDownV5{0%,100%{box-shadow:0 0 0 rgba(255,79,91,0)}25%,70%{box-shadow:0 0 18px rgba(255,79,91,.95),inset 0 0 8px rgba(255,79,91,.18)}}
+@keyframes borderUpV5{0%,100%{border-color:var(--restore-border,#30343a)}25%,70%{border-color:#35e08b}}
+@keyframes borderDownV5{0%,100%{border-color:var(--restore-border,#30343a)}25%,70%{border-color:#ff4f5b}}
+.flash-up .top,.flash-up .board,.flash-up .tier,.flash-up .hlb,.flash-up .clock,.flash-up .metric,.flash-up .chart{animation:borderUpV5 .48s ease 3,pulseUpV5 .48s ease 3!important}
+.flash-down .top,.flash-down .board,.flash-down .tier,.flash-down .hlb,.flash-down .clock,.flash-down .metric,.flash-down .chart{animation:borderDownV5 .48s ease 3,pulseDownV5 .48s ease 3!important}
+.flash-up .card{animation:pulseUpV5 .48s ease 3!important}
+.flash-down .card{animation:pulseDownV5 .48s ease 3!important}
+.news-source{color:#8f969e;font-size:13px;margin:-6px 0 14px}
+.news-event{transition:.2s}.news-event:hover{transform:translateY(-1px);border-color:#0e8b58}
+.news-event.high{border-left-color:#ff4d5d}.news-event.medium{border-left-color:#ff9e00}.news-event.low{border-left-color:#ffd400}
+</style>
+
+<style id="v17-mobile-compact">
+@media (max-width: 620px){
+  html,body{width:100%;overflow-x:hidden;background:#030405}
+  .page{width:100%;max-width:none;padding:8px 8px 14px !important}
+  .top{height:58px !important;padding:0 10px !important;border-radius:8px !important;margin:0 !important}
+  .logo{width:34px !important;height:30px !important;border-width:2px !important}
+  .brand{gap:8px !important}
+  .brand-title{font-size:17px !important;white-space:nowrap}
+  .brand-sub{display:none !important}
+  .icons{gap:2px !important}
+  .icon-btn{min-width:34px !important;width:34px !important;height:40px !important;padding:3px !important;font-size:20px !important}
+  .board{margin-top:10px !important;border:1px solid #20242a !important;border-radius:16px !important;overflow:hidden !important}
+  .summary{padding:12px 10px 10px !important}
+  .quotes{display:grid !important;grid-template-columns:1fr 1fr !important;gap:7px !important;width:100% !important}
+  .card{width:100% !important;min-width:0 !important;height:62px !important;padding:7px 9px !important;border-radius:8px !important}
+  .card.usd{grid-column:1 / 3 !important;width:52% !important;justify-self:center !important}
+  .label{font-size:11px !important;margin-bottom:3px !important}
+  .value{font-size:17px !important}
+  .rp{font-size:11px !important}
+  .delta{right:7px !important;bottom:7px !important;padding:3px 5px !important;font-size:11px !important}
+  .tiers{display:flex !important;flex-wrap:wrap !important;justify-content:center !important;align-items:center !important;gap:6px !important;margin-top:9px !important}
+  .tier{width:auto !important;min-width:0 !important;min-height:32px !important;padding:4px 8px !important;gap:6px !important;border-radius:6px !important}
+  .nom{font-size:11px !important}
+  .gram{font-size:11px !important}
+  .plus{font-size:10px !important;padding:3px 5px !important}
+  .status{margin-top:13px !important;display:grid !important;grid-template-columns:74px minmax(150px,1fr) 74px !important;grid-template-areas:"hl clock metrics" !important;gap:6px !important;align-items:center !important}
+  .hl{grid-area:hl !important;width:74px !important;justify-self:stretch !important;gap:4px !important}
+  .hlb{width:100% !important;padding:4px 5px !important;font-size:0 !important;text-align:center !important;border-radius:5px !important}
+  .hlb span{float:none !important;display:block !important;font-size:11px !important}
+  .clock{grid-area:clock !important;width:100% !important;height:70px !important;padding:7px 8px !important;gap:7px !important;border-radius:8px !important}
+  .time{font-size:24px !important;letter-spacing:1px !important;white-space:nowrap !important}
+  .date{font-size:11px !important;margin-top:2px !important}
+  .badge{min-width:62px !important;height:29px !important;padding:3px 7px !important;font-size:11px !important}
+  .badge:before{width:8px !important;height:8px !important}
+  .metrics{grid-area:metrics !important;width:74px !important;justify-self:stretch !important;gap:4px !important}
+  .metric{width:100% !important;padding:4px 5px !important;font-size:0 !important;text-align:center !important;border-radius:5px !important}
+  .metric b{float:none !important;display:block !important;font-size:11px !important}
+  .chart{height:465px !important;margin-top:0 !important;border-top:1px solid #24282e !important}
+  .tv{min-height:465px !important}
+  .menu{width:245px !important;top:42px !important}
+  .modal{width:96vw !important;max-height:90vh !important;border-radius:15px !important}
+  .modal-head{padding:14px 16px !important;font-size:17px !important}
+  .modal-body{padding:14px 16px !important}
+}
+@media (max-width: 390px){
+  .status{grid-template-columns:66px minmax(142px,1fr) 66px !important}
+  .hl,.metrics{width:66px !important}
+  .time{font-size:21px !important}
+  .chart,.tv{height:430px !important;min-height:430px !important}
+}
+</style>
+
+<style id="v18-sound-style">
+.sound-panel{width:min(410px,96vw)}
+.sound-row{display:grid;grid-template-columns:48px 1fr 58px;gap:14px;align-items:center;padding:14px 0;border-bottom:1px solid #24272a}
+.sound-ico{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:22px;background:#14251b}
+.sound-ico.down{background:#31191b}.sound-ico.promo{background:#30270b}.sound-ico.tick{background:#142536}
+.sound-name{font-weight:900;font-size:17px}.sound-sub{font-size:13px;color:#858b96;margin-top:3px}
+.sw{appearance:none;width:56px;height:30px;border-radius:18px;background:#36393d;border:1px solid #555;position:relative;cursor:pointer}
+.sw:after{content:"";position:absolute;width:23px;height:23px;border-radius:50%;left:3px;top:2px;background:#858c98;transition:.2s}
+.sw:checked{background:#116f3e;border-color:#2aa966}.sw:checked:after{left:28px;background:#43df8d}
+.sound-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding-top:16px}.sound-actions button{height:54px;border:1px solid #3a3d40;background:#191b1d;color:#adb2ba;border-radius:10px;font-weight:900;font-size:16px}
+</style>
+
+<style id="v19-history-style">
+.history-wrap{margin:14px 0 18px;border:1px solid #173d2a;border-radius:12px;overflow:hidden;background:#080a0b}
+.history-head{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid #171a1d;font-weight:900}
+.history-head .hist-title{font-size:16px}
+.history-head select{background:#1b2026;color:#d8dbe0;border:1px solid #3b4148;border-radius:10px;padding:8px 12px;font-size:14px}
+.history-count{margin-left:auto;color:#747b86;font-size:13px}
+.history-scroll{overflow:auto;max-height:620px}
+.history-table{width:100%;border-collapse:collapse;min-width:1180px}
+.history-table th{position:sticky;top:0;z-index:2;background:#111315;color:#9da2a9;text-align:left;font-size:12px;letter-spacing:.02em;padding:10px 12px;border-bottom:1px solid #24282d}
+.history-table td{padding:12px;border-bottom:1px solid #15181b;vertical-align:middle}
+.history-time{font-size:16px;color:#e8edf2;white-space:nowrap}
+.hist-price{font-size:17px;font-weight:900;white-space:nowrap}
+.hist-rp{font-size:10px;margin-right:4px}
+.hist-up{color:#26d77c}.hist-down{color:#ff5c66}.hist-flat{color:#b7bdc6}
+.hist-change{font-size:13px;font-weight:900;margin-top:2px}
+.hist-spread{font-weight:900}
+.hist-status{display:inline-block;padding:4px 8px;border-radius:6px;border:1px solid #7e5b00;background:#302300;color:#ffc52c;font-size:12px;font-weight:900;white-space:nowrap}
+.hist-tier{font-size:12px;line-height:1.45;white-space:nowrap}
+.hist-tier b{display:block;font-size:13px}
+.hist-tier .pos{color:#2ad984}.hist-tier .neg{color:#ff5a66}
+@media(max-width:620px){
+  .history-wrap{margin:10px 0 12px;border-radius:10px}
+  .history-head{padding:10px 10px;gap:8px}
+  .history-head .hist-title{font-size:14px}
+  .history-head select{padding:6px 8px;font-size:12px}
+  .history-count{font-size:11px}
+  .history-scroll{max-height:460px}
+  .history-table{min-width:920px}
+  .history-table th{font-size:10px;padding:8px}
+  .history-table td{padding:9px 8px}
+  .history-time{font-size:13px}
+  .hist-price{font-size:14px}
+  .hist-change{font-size:11px}
+}
+</style>
+
+<style id="v24-tier-history-style">
+.hist-tier .hist-tier-gram{display:block;color:#d7dce3;font-weight:500}
+.hist-tier .pos{color:#25df83 !important;font-weight:900}
+.hist-tier .neg{color:#ff5561 !important;font-weight:900}
+.hist-tier .zero{color:#aeb5bf !important;font-weight:800}
+@media(max-width:620px){.hist-tier .hist-tier-gram{font-size:11px}.hist-tier b{font-size:11px}}
+</style>
+
+<style id="v25-promo-static-style">
+.promo-static-wrap{display:flex;flex-direction:column;gap:14px}
+.promo-static-card{border:1px solid #3a3d40;background:#1a1a1a;border-radius:18px;padding:18px 20px}
+.promo-static-title{color:#f4f4f4;font-size:18px;font-weight:900;margin-bottom:8px}
+.promo-static-desc{color:#a9adb6;font-size:16px;margin-bottom:12px}
+.promo-static-meta{display:flex;flex-wrap:wrap;gap:8px;align-items:center;color:#858b96;font-size:15px}
+.promo-code{color:#17df78;font-weight:900}
+.promo-copy-btn{margin-top:12px;border:1px solid #0f7b43;background:#0c2d1c;color:#20df7b;border-radius:10px;padding:8px 14px;font-size:15px;font-weight:900;cursor:pointer}
+.promo-copy-btn:active{transform:scale(.98)}
+@media(max-width:620px){.promo-static-card{padding:14px 15px;border-radius:14px}.promo-static-title{font-size:16px}.promo-static-desc{font-size:14px}.promo-static-meta{font-size:13px}.promo-copy-btn{font-size:13px;padding:7px 11px}}
+</style>
+
+<style id="v30-login-style">
+#authGate{position:fixed;inset:0;z-index:999999;background:#020304;display:flex;align-items:center;justify-content:center;padding:20px;overflow:auto;font-family:Arial,Helvetica,sans-serif}
+#authGate.hidden{display:none}.login-wrap{width:min(560px,94vw);margin:auto}.login-card{background:linear-gradient(180deg,rgba(10,12,15,.97),rgba(6,7,9,.99));border:1px solid #ff4fd6;border-radius:24px;padding:28px;box-shadow:0 0 40px rgba(255,79,214,.12)}
+.login-logo{display:flex;justify-content:center;margin-bottom:26px}.login-logo img{max-width:390px;width:92%;height:auto;display:block}.login-welcome{text-align:center;color:#ff55d8;letter-spacing:.35em;font-weight:800;font-size:14px;margin-bottom:18px}.login-sub{text-align:center;color:#a9afb8;font-size:14px;letter-spacing:.12em;line-height:1.7;margin-bottom:24px;text-transform:uppercase}.step-dots{display:flex;justify-content:center;gap:12px;margin:0 0 28px}.step-dots span{width:58px;height:7px;border-radius:10px;background:#262a30}.step-dots span.active{background:#ff4fd6;box-shadow:0 0 12px rgba(255,79,214,.55)}
+.auth-label{font-size:13px;color:#b5bbc4;font-weight:800;margin:12px 0 8px}.phone-row{display:grid;grid-template-columns:96px 1fr;gap:10px}.prefix{height:54px;border:1px solid #71365f;border-radius:14px;display:flex;align-items:center;justify-content:center;color:#ff5bd8;background:#171017;font-weight:900;font-size:22px}.auth-input{width:100%;height:54px;box-sizing:border-box;background:#0d0f12;border:1px solid #343941;border-radius:14px;color:#f2f4f7;padding:0 16px;font-size:18px;outline:none}.auth-input:focus{border-color:#ff4fd6;box-shadow:0 0 0 3px rgba(255,79,214,.08)}
+.auth-btn{width:100%;height:56px;border:0;border-radius:14px;margin-top:22px;background:linear-gradient(90deg,#ff48ca,#ff2dad);color:white;font-weight:900;font-size:18px;cursor:pointer;box-shadow:0 10px 26px rgba(255,45,173,.18)}.auth-btn:disabled{opacity:.55;cursor:not-allowed}.auth-alt{margin-top:14px;height:52px;border:1px solid #343941;border-radius:14px;background:#12151a;color:#f4f5f6;display:flex;align-items:center;justify-content:center;text-decoration:none;font-weight:800}.auth-alt.hidden{display:none}.auth-msg{min-height:22px;margin-top:14px;font-size:13px;color:#ff7d8a;text-align:center}.auth-msg.ok{color:#46dc8f}.small-note{font-size:12px;color:#757d88;text-align:center;line-height:1.6;margin-top:18px}.pin-screen{display:none}.pin-screen.active{display:block}.number-screen.hidden{display:none}.code-box{margin-top:14px;padding:12px;border-radius:12px;background:#111317;border:1px solid #3c4149;text-align:center;color:#fff;font-weight:900;letter-spacing:.12em}
+@media(max-width:520px){#authGate{padding:14px}.login-card{padding:22px 18px;border-radius:20px}.login-logo img{width:100%}.phone-row{grid-template-columns:82px 1fr}.prefix{font-size:20px}.login-sub{font-size:12px}.login-welcome{font-size:12px}.auth-btn{font-size:16px}}
+</style>
+
+<style id="v61-news-promo-clock-fix">
+.time{white-space:nowrap!important}.clock-main{min-width:0}.date{line-height:1.15}.wib-line{display:inline-block;margin-top:4px;font-size:.82em}
+.gold-signal{display:inline-block;margin-top:10px;padding:6px 10px;border-radius:9px;font-weight:1000;letter-spacing:.3px}.gold-signal.up{background:#0c3a26;color:#35e08b;border:1px solid #177c50}.gold-signal.down{background:#40181c;color:#ff6570;border:1px solid #8b2c35}.gold-signal.wait{background:#3b310d;color:#ffd34d;border:1px solid #776111}.news-countdown{font-weight:900;color:#ffd34d}.promo-live-box{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px}.promo-live-box>div{background:#151719;border:1px solid #303338;border-radius:14px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px}.promo-live-box small{color:#8f969e;font-weight:900}.promo-live-box strong{font-size:16px}.promo-pill.off{background:#4a2025;color:#ff6d75}.promo-section-title{font-size:14px;font-weight:900;color:#8f969e;margin:2px 0 12px;text-transform:uppercase;letter-spacing:.4px}@media(max-width:620px){.promo-live-box{grid-template-columns:1fr}.time{font-size:34px!important}.date{font-size:15px!important}}
+</style>
+
+<style id="titik-and-quotes-layout">
+/* Hilangkan semua elemen gerigi / teeth SVG - border biasa saja */
+.v623svg, .v625usd{display:none!important}
+.card,.clock,.limit-metric,.tier,.hlb,.metric{position:relative!important}
+
+/* ===== CARD TITIK (PERSIS SEPERTI USD/IDR, BELI, JUAL - BORDER BIASA, TIDAK KEDIP, TANPA ON) ===== */
+.card.titik-on, .card.titik{
+  border:2px solid #ff4fa8 !important;
+  box-shadow:0 0 0 1px rgba(255,79,168,.05) inset !important;
+  background:linear-gradient(145deg,#080a0d,#0c0f12) !important;
+  transition:all .3s ease;
+  animation:none !important;
+}
+.card.titik-on .label, .card.titik .label{
+  color:#ff4fa8 !important;
+  font-size:21px;
+  margin-bottom:11px;
+  font-weight:1000;
+  text-shadow:none !important;
+  animation:none !important;
+}
+.card.titik-on .value, .card.titik .value{
+  color:#f5f6f7 !important;
+  font-size:33px;
+  line-height:1;
+  font-weight:1000;
+  text-shadow:none !important;
+  animation:none !important;
+}
+.card.titik-on .rp, .card.titik .rp{
+  font-size:20px;
+  color:#f0f0f0;
+}
+.card.titik-on .delta, .card.titik .delta{
+  display:none !important;
+}
+
+/* KONDISI BORDER TETAP BIASA, TIDAK KEDIP & TANPA ON */
+.card.titik-on.on{
+  border-color:#ff4fa8 !important;
+  box-shadow:0 0 0 1px rgba(255,79,168,.05) inset !important;
+  animation:none !important;
+}
+.card.titik-on.on .label{
+  color:#ff4fa8 !important;
+  text-shadow:none !important;
+  animation:none !important;
+}
+.card.titik-on.on .value{
+  color:#f5f6f7 !important;
+  text-shadow:none !important;
+  animation:none !important;
+}
+
+/* HILANG SETELAH 30 MENIT PROMO OFF */
+.card.titik-on.hidden, .card.titik.hidden{
+  display:none !important;
+}
+
+/* Quotes layout ketika 4 cards vs 3 cards */
+@media (min-width: 761px){
+  .quotes{
+    width:min(1360px,100%) !important;
+  }
+}
+@media (max-width: 760px){
+  .quotes{display:grid !important;grid-template-columns:1fr 1fr !important;gap:8px !important}
+  .card{height:86px !important;padding:10px !important}
+  .card.usd{grid-column:auto !important;width:100% !important}
+  .card.titik-on{width:100% !important}
+  .card.titik-on .label{font-size:15px;margin-bottom:7px}
+  .card.titik-on .delta{font-size:14px;right:9px;bottom:11px;padding:3px 7px}
+  .quotes:has(.card.titik-on.hidden) .card.usd,
+  .quotes.titik-hidden .card.usd{grid-column:1 / -1 !important;width:55% !important;margin:0 auto !important}
+}
+@media (max-width: 620px){
+  .quotes{display:grid !important;grid-template-columns:1fr 1fr !important;gap:7px !important;width:100% !important}
+  .card{width:100% !important;min-width:0 !important;height:62px !important;padding:7px 9px !important;border-radius:8px !important}
+  .card.usd{grid-column:auto !important;width:100% !important}
+  .card.titik-on{width:100% !important}
+  .card.titik-on .label{font-size:11px !important;margin-bottom:3px !important}
+  .card.titik-on .value{font-size:17px !important}
+  .card.titik-on .rp{font-size:11px !important}
+  .card.titik-on .delta{font-size:10px !important;right:6px !important;bottom:6px !important;padding:2px 5px !important}
+  .quotes:has(.card.titik-on.hidden) .card.usd,
+  .quotes.titik-hidden .card.usd{grid-column:1 / 3 !important;width:52% !important;justify-self:center !important}
+}
+</style>
+<script id="v-no-teeth-cleanup">
+(function(){
+  // Nonaktifkan semua pembentukan border gerigi/berigi - gunakan border standar biasa
+  window.drawTeethBorder = function(){};
+  window.updateTitikTeethColor = function(){};
+  window.applyTeethBorder = function(){};
+
+  function removeAllTeethSvg(){
+    document.querySelectorAll('.v623svg, .v625usd').forEach(el => el.remove());
+  }
+  if(document.readyState === 'loading'){
+    addEventListener('DOMContentLoaded', removeAllTeethSvg);
+  } else {
+    removeAllTeethSvg();
+  }
+  setTimeout(removeAllTeethSvg, 50);
+  setTimeout(removeAllTeethSvg, 250);
+  setTimeout(removeAllTeethSvg, 1000);
+})();
+</script>
+
+<script id="v-usd-border-live-js">
+addEventListener('DOMContentLoaded',()=>{
+ const UP='rgb(0,229,139)', DOWN='rgb(255,72,91)';
+ const usd=document.querySelector('.usd');
+ const card=usd?.closest('.card') || usd;
+ if(!usd || !card) return;
+
+ card.querySelectorAll('.v623svg, .v625usd').forEach(el => el.remove());
+
+ let last=null;
+ function readUSD(){
+   const raw=(usd.textContent||'').replace(/\s/g,'').replace(/Rp/ig,'').replace(/\./g,'').replace(',','.');
+   const m=raw.match(/(\d+(?:\.\d+)?)/);
+   const v=m?Number(m[1]):NaN;
+   if(!Number.isFinite(v)) return;
+   if(last!==null && v!==last){
+     card.style.borderColor = v>last?UP:DOWN;
+   }
+   last=v;
+ }
+ readUSD();
+ new MutationObserver(readUSD).observe(usd,{subtree:true,childList:true,characterData:true});
+});
+</script>
+
+<style id="v629-header-border-live">
+.live-main-header{
+  --header-direction-color:#2d8cff;
+  border-color:var(--header-direction-color)!important;
+}
+</style>
+<script id="v629-header-border-live-js">
+addEventListener('DOMContentLoaded',()=>{
+  const UP='rgb(0,229,139)', DOWN='rgb(255,72,91)';
+  const buy=document.querySelector('.buy');
+  const header=document.querySelector('.live-main-header');
+  if(!buy||!header)return;
+
+  let last=null;
+  function update(){
+    const raw=(buy.textContent||'').replace(/\s/g,'').replace(/Rp/ig,'').replace(/\./g,'').replace(',','.');
+    const m=raw.match(/(\d+(?:\.\d+)?)/);
+    const v=m?Number(m[1]):NaN;
+    if(!Number.isFinite(v))return;
+    if(last!==null && v!==last){
+      header.style.setProperty('--header-direction-color',v>last?UP:DOWN);
+    }
+    last=v;
+  }
+  update();
+  new MutationObserver(update).observe(buy,{subtree:true,childList:true,characterData:true});
+});
+</script>
+
+<style id="v630-tv-frame-live">
+:root{--tv-frame-live:#30343b}
+.chart{border-color:var(--tv-frame-live)!important}
+.tv{border-color:var(--tv-frame-live)!important}
+</style>
+<script id="v630-tv-frame-live-js">
+addEventListener('DOMContentLoaded',()=>{
+ const UP='rgb(0,229,139)', DOWN='rgb(255,72,91)';
+ const buy=document.querySelector('.buy');
+ if(!buy)return;
+ let last=null;
+ function updateTVBorder(){
+   const raw=(buy.textContent||'').replace(/\s/g,'').replace(/Rp/ig,'').replace(/\./g,'').replace(',','.');
+   const m=raw.match(/(\d+(?:\.\d+)?)/);
+   const v=m?Number(m[1]):NaN;
+   if(!Number.isFinite(v))return;
+   if(last!==null && v!==last){
+     document.documentElement.style.setProperty('--tv-frame-live',v>last?UP:DOWN);
+   }
+   last=v;
+ }
+ updateTVBorder();
+ new MutationObserver(updateTVBorder).observe(buy,{subtree:true,childList:true,characterData:true});
+});
+</script>
+
+</head>
+<body>
+<div id="authGate">
+  <div class="login-wrap">
+    <div class="login-card">
+      <div class="login-logo"><img src="/harga-treasury-logo.png" alt="Harga Treasury"></div>
+      <div class="login-welcome">SELAMAT DATANG</div>
+      <div class="login-sub">Pantau harga emas real-time dengan akurat</div>
+      <div class="step-dots"><span id="dot1" class="active"></span><span id="dot2"></span><span id="dot3"></span></div>
+
+      <div id="numberScreen" class="number-screen">
+        <div class="auth-label">NOMOR WHATSAPP</div>
+        <div class="phone-row">
+          <div class="prefix">+62</div>
+          <input id="authNumber" class="auth-input" inputmode="numeric" autocomplete="tel" placeholder="8xxxxxxxxxx">
+        </div>
+        <button id="authNumberBtn" class="auth-btn">Masuk ke Akun</button>
+      </div>
+
+      <div id="pinScreen" class="pin-screen">
+        <div class="auth-label">BUAT PIN</div>
+        <input id="authPin" class="auth-input" type="password" inputmode="numeric" maxlength="8" placeholder="4–8 digit PIN">
+        <div class="auth-label">ULANGI PIN</div>
+        <input id="authPin2" class="auth-input" type="password" inputmode="numeric" maxlength="8" placeholder="Ulangi PIN">
+        <button id="authPinBtn" class="auth-btn">Buat PIN & Verifikasi</button>
+        <div id="verifyCode" class="code-box" style="display:none"></div>
+        <a id="chatAdmin" class="auth-alt hidden" target="_blank" rel="noopener">💬 Chat Admin untuk Verifikasi</a>
+      </div>
+
+      <div id="authMsg" class="auth-msg"></div>
+      <div class="small-note">Akses dashboard hanya diberikan setelah nomor WhatsApp diverifikasi admin.</div>
+    </div>
+  </div>
+</div>
+
+<div class="page">
+<div class="top live-main-header"><div class="brand"><div class="logo"></div><div><div class="brand-title">HARGA <span>TREASURY</span></div><div class="brand-sub">REALTIME • AKURAT • TERPERCAYA</div></div></div><div class="icons">
+<button class="icon-btn" id="indicatorBtn" title="Pengaturan Indikator">〽</button>
+<button class="icon-btn" id="newsBtn" title="News">♧<span class="notif-dot" id="newsCount">0</span></button>
+<button class="icon-btn" id="promoBtn" title="Promo">%</button>
+<button class="icon-btn" id="calculatorBtn" title="Kalkulator Emas">⚖</button>
+<div class="menu-wrap"><button class="icon-btn" id="menuBtn" title="Menu">☰</button>
+<div class="menu" id="mainMenu">
+<button class="menu-item install" id="installBtn"><span class="mi">⇩</span>Install Aplikasi</button>
+<button class="menu-item" id="themeBtn"><span class="mi">◔</span>Ganti Mode</button>
+<button class="menu-item" id="soundBtn"><span class="mi">🔊</span><span id="soundText">Sound & Getar</span></button>
+<button class="menu-item" id="settingBtn"><span class="mi">⚙</span>Setting</button>
+<button class="menu-item logout" id="logoutBtn"><span class="mi">↪</span>Logout</button>
+</div></div></div></div>
+<div class="board">
+<div class="summary">
+<div class="quote-zone"><div class="quotes">
+<div class="card buy"><div class="label">BELI</div><div class="value"><span class="rp">Rp</span><span class="price-num" id="buy">2.559.035</span></div><div class="delta" id="buyDelta">-616</div></div>
+<div class="card sell"><div class="label">JUAL</div><div class="value"><span class="rp">Rp</span><span class="price-num" id="sell">2.474.781</span></div><div class="delta" id="sellDelta">-551</div></div>
+<div class="card usd"><div class="label">USD/IDR</div><div class="value blue">Rp&nbsp; <span id="usd">17.630</span></div></div>
+<div class="card titik-on" id="titikOnCard"><div class="label">TITIK</div><div class="value"><span class="rp">Rp</span><span class="price-num" id="titikOn">--</span></div><div class="delta" id="titikOnDelta" style="display:none!important"></div></div>
+</div></div>
+<div class="tiers" id="tiers">
+<div class="tier"><span class="nom">10JT</span><span class="gram">3.9077 gr</span><span class="plus">+Rp 1.759</span></div>
+<div class="tier"><span class="nom">30JT</span><span class="gram">11.7232 gr</span><span class="plus">+Rp 8.276</span></div>
+<div class="tier"><span class="nom">40JT</span><span class="gram">15.6309 gr</span><span class="plus">+Rp 11.035</span></div>
+<div class="tier"><span class="nom">50JT</span><span class="gram">19.5386 gr</span><span class="plus">+Rp 13.794</span></div>
+<div class="tier"><span class="nom">60JT</span><span class="gram">23.4463 gr</span><span class="plus">+Rp 19.552</span></div>
+</div>
+<div class="status">
+<div class="hl"><div class="hlb">TERTINGGI <span id="high">2.568.174</span></div><div class="hlb low">TERENDAH <span id="low">2.539.457</span></div></div>
+<div class="clock"><div class="clock-main"><div class="time"><span class="h" id="hh">14</span><span class="sep sep-hour">:</span><span class="m" id="mm">23</span><span class="sep sep-second">:</span><span class="s" id="ss">44</span></div><div class="date" id="dateLabel">Senin, 7 Sep 2026 WIB</div></div><div class="clock-indicator"><span class="clock-indicator-label">INDIKATOR</span><div class="badge" id="promo">OFF</div></div></div>
+<div class="metrics"><div class="metric limit-metric">LIMIT <b id="limit">5</b></div><div class="metric" id="markMetric"><span id="markLabel">MARK</span> <b id="markdown">--</b></div><div class="metric sp">SPREAD <b id="spread">-3.29%</b></div></div>
+</div>
+</div>
+<div class="chart"><div id="tv" class="tv"></div></div>
+</div>
+</div>
+
+<section class="history-wrap" id="historySection">
+  <div class="history-head">
+    <span>↶</span>
+    <span class="hist-title">Riwayat Perubahan Harga</span>
+    <select id="historyMode">
+      <option value="gold">Harga Emas</option>
+    </select>
+    <span class="history-count" id="historyCount">0 records</span>
+  </div>
+  <div class="history-scroll">
+    <table class="history-table">
+      <thead>
+        <tr>
+          <th>WAKTU</th>
+          <th>BELI</th>
+          <th>JUAL</th>
+          <th>SPREAD</th>
+          <th>USD/IDR</th>
+          <th>STATUS</th>
+          <th>10JT</th>
+          <th>30JT</th>
+          <th>40JT</th>
+          <th>50JT</th>
+          <th>60JT</th>
+        </tr>
+      </thead>
+      <tbody id="historyBody">
+        <tr><td colspan="11" style="text-align:center;color:#777;padding:20px">Memuat riwayat...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<div class="modal-backdrop" id="settingModal"><div class="modal small"><div class="modal-head">PENGATURAN <button class="xbtn" data-close="settingModal">×</button></div><div class="modal-body">
+<div class="setting-row" id="appearanceOpen"><div><div class="setting-title">⚙️ &nbsp; Tampilan</div><div class="setting-sub">Ubah seluruh ukuran tampilan</div></div><div class="arrow">›</div></div>
+<div class="setting-row" id="nominalOpen"><div><div class="setting-title">🎚️ &nbsp; Pilih Nominal</div><div class="setting-sub">Filter nominal investasi</div></div><div class="arrow">›</div></div>
+</div></div></div>
+<div class="modal-backdrop" id="appearanceModal"><div class="modal"><div class="modal-head orange">⚙ &nbsp; Pengaturan Tampilan <button class="xbtn" data-close="appearanceModal">×</button></div><div class="modal-body">
+<div class="control-line"><div class="control-label">UKURAN SEMUA</div><div class="step"><button data-step="global" data-dir="-1">−</button><strong id="globalVal">100%</strong><button data-step="global" data-dir="1">+</button></div><span class="reset-link" data-reset="global">Reset</span></div>
+<div class="control-line"><div class="control-label">FONT NOMINAL</div><div class="step"><button data-step="nom" data-dir="-1">−</button><strong id="nomVal">100%</strong><button data-step="nom" data-dir="1">+</button></div><span class="reset-link" data-reset="nom">Reset</span></div>
+<div class="control-line"><div class="control-label">BELI / JUAL ATAS</div><div class="step"><button data-step="quote" data-dir="-1">−</button><strong id="quoteVal">100%</strong><button data-step="quote" data-dir="1">+</button></div><span class="reset-link" data-reset="quote">Reset</span></div>
+<div class="control-line"><div class="control-label">KOTAK BELI / JUAL</div><div class="step"><button data-step="box" data-dir="-1">−</button><strong id="boxVal">100%</strong><button data-step="box" data-dir="1">+</button></div><span class="reset-link" data-reset="box">Reset</span></div>
+<button class="default-btn" id="defaultAppearance">↻ &nbsp; Default (kembali ke semula)</button>
+</div></div></div>
+<div class="modal-backdrop" id="nominalModal"><div class="modal"><div class="modal-head orange">＄ &nbsp; Pilih Nominal Investasi <button class="xbtn" data-close="nominalModal">×</button></div><div class="modal-body"><div class="nom-list">
+<label class="nom-row"><span class="nom-left"><input class="nom-check" type="checkbox" value="10" checked>10jt</span><span class="disc">Disc 3.31%</span></label>
+<label class="nom-row"><span class="nom-left"><input class="nom-check" type="checkbox" value="30" checked>30jt</span><span class="disc">Disc 3.32%</span></label>
+<label class="nom-row"><span class="nom-left"><input class="nom-check" type="checkbox" value="40" checked>40jt</span><span class="disc">Disc 3.32%</span></label>
+<label class="nom-row"><span class="nom-left"><input class="nom-check" type="checkbox" value="50" checked>50jt</span><span class="disc">Disc 3.32%</span></label>
+<label class="nom-row"><span class="nom-left"><input class="nom-check" type="checkbox" value="60" checked>60jt</span><span class="disc">Disc 3.32%</span></label>
+</div><div class="modal-actions"><button class="cancel" data-close="nominalModal">Batal</button><button class="save" id="saveNominals">Simpan</button></div></div></div></div>
+<div class="modal-backdrop" id="newsModal">
+  <div class="modal news-modal">
+    <div class="modal-head">
+      <div class="head-left">
+        <span class="head-icon">📰</span>
+        <span>News XAU/USD (Forex Factory)</span>
+      </div>
+      <button class="xbtn" data-close="newsModal">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="news-impact-filters" id="newsImpactFilters">
+        <div class="impact-filter-pill low active" data-filter="low">
+          <div class="bars-icon low"><span></span><span></span><span></span></div>
+          <span>Low</span>
+        </div>
+        <div class="impact-filter-pill medium active" data-filter="medium">
+          <div class="bars-icon medium"><span></span><span></span><span></span></div>
+          <span>Medium</span>
+        </div>
+        <div class="impact-filter-pill high active" data-filter="high">
+          <div class="bars-icon high"><span></span><span></span><span></span></div>
+          <span>High</span>
+        </div>
+      </div>
+      <div class="news-groups" id="newsList">Memuat data news...</div>
+    </div>
+  </div>
+</div>
+<div class="modal-backdrop" id="promoModal"><div class="modal"><div class="modal-head orange">% &nbsp; Promo Treasury <button class="xbtn" data-close="promoModal">×</button></div><div class="modal-body">
+<div class="promo-live-box"><div><small>STATUS PROMO LIVE</small><strong class="promo-pill unknown" id="promoModalStatus">UNKNOWN</strong></div><div><small>LIMIT</small><strong id="promoModalLimit">--</strong></div></div>
+
+<div style="margin-bottom:14px;padding:12px;background:#101316;border:1px solid #2d333b;border-radius:12px">
+  <div style="font-size:12px;font-weight:800;color:#f2b633;margin-bottom:6px">TOKEN MONITORING TREASURY</div>
+  <div style="display:flex;gap:8px">
+    <input id="tsTokenInput" type="text" placeholder="Tempel token sesi di sini..." style="flex:1;height:38px;background:#060809;border:1px solid #363c45;border-radius:8px;color:#fff;padding:0 10px;font-size:13px;outline:none">
+    <button id="tsTokenSaveBtn" style="height:38px;padding:0 14px;background:#238636;color:#fff;border:0;border-radius:8px;font-weight:900;font-size:13px;cursor:pointer">Sambungkan</button>
+  </div>
+  <div id="tsTokenMsg" style="font-size:11px;color:#8b949e;margin-top:5px">Deteksi promo otomatis aktif 24/7.</div>
+</div>
+
+<div class="promo-section-title">Promo / kode yang ditampilkan</div><div class="list-cards" id="promoList">
+<div class="promo-static-wrap" id="promoStaticContent">
+  <div class="promo-static-card">
+    <div class="promo-static-title">Promo Pengguna Baru</div>
+    <div class="promo-static-desc">Disc. 99%* Khusus Pengguna Baru</div>
+    <div class="promo-static-meta">
+      <span class="promo-code">COBANABUNGEMAS</span>
+      <span>· Min. Rp 5.000 · s/d 2026-12-31</span>
+    </div>
+    <button class="promo-copy-btn" data-code="COBANABUNGEMAS">⧉ Salin kode</button>
+  </div>
+
+  <div class="promo-static-card">
+    <div class="promo-static-title">#BuatMasaDepan20</div>
+    <div class="promo-static-desc">Menangkan 1 Dryer Portable BOLDe!</div>
+    <div class="promo-static-meta">
+      <span class="promo-code">BETTERFUTURE20</span>
+      <span>· Min. Rp 10.000 · s/d 2026-09-21</span>
+    </div>
+    <button class="promo-copy-btn" data-code="BETTERFUTURE20">⧉ Salin kode</button>
+  </div>
+</div>
+</div></div></div></div>
+
+<div class="modal-backdrop" id="calculatorModal"><div class="modal calculator-modal"><div class="modal-head orange">⊕ &nbsp; Kalkulator Emas <button class="xbtn" data-close="calculatorModal">×</button></div><div class="modal-body">
+<div class="calc-prices"><div class="calc-price active"><span>Harga Beli</span><b>Rp <span id="calcBuy">-</span></b></div><div class="calc-price"><span>Harga Jual</span><b>Rp <span id="calcSell">-</span></b></div></div>
+<div class="calc-tabs"><button class="active" data-calc-mode="money">Uang → Gram</button><button data-calc-mode="gram">Gram → Uang</button></div>
+<label class="calc-label" id="calcInputLabel">Jumlah Uang (Rp)</label><input id="calcInput" class="calc-input" inputmode="decimal" placeholder="Contoh: 10000000">
+<div class="calc-result"><span id="calcResultLabel">Hasil Gram</span><b id="calcResult">0.0000 gr</b></div>
+</div></div></div>
+
+<div class="modal-backdrop" id="indicatorModal"><div class="modal indicator-modal"><div class="modal-head orange">⚙ &nbsp; Pengaturan Indikator <button class="xbtn" data-close="indicatorModal">×</button></div><div class="modal-body">
+<p class="indicator-help">Aktifkan indikator yang ingin ditampilkan di chart. Pilihan disimpan di browser dan diterapkan saat chart dimuat ulang.</p>
+<div class="indicator-list" id="indicatorList">
+<label class="indicator-row"><span><i class="dot ma"></i><b>Moving Average (MA)</b><small>Simple Moving Average</small></span><span class="recommend">REKOMENDASI</span><input type="checkbox" class="indicator-check" value="ma" checked><i class="toggle-ui"></i></label>
+<label class="indicator-row"><span><i class="dot ema"></i><b>Exponential MA (EMA)</b><small>Exponential Moving Average</small></span><input type="checkbox" class="indicator-check" value="ema"><i class="toggle-ui"></i></label>
+<label class="indicator-row"><span><i class="dot bb"></i><b>Bollinger Bands</b><small>Volatility bands</small></span><span class="recommend">REKOMENDASI</span><input type="checkbox" class="indicator-check" value="bb" checked><i class="toggle-ui"></i></label>
+<label class="indicator-row"><span><i class="dot vwap"></i><b>VWAP</b><small>Volume Weighted Avg Price</small></span><span class="recommend">REKOMENDASI</span><input type="checkbox" class="indicator-check" value="vwap" checked><i class="toggle-ui"></i></label>
+<label class="indicator-row"><span><i class="dot rsi"></i><b>RSI</b><small>Relative Strength Index</small></span><input type="checkbox" class="indicator-check" value="rsi"><i class="toggle-ui"></i></label>
+</div><button class="default-btn" id="saveIndicators">Simpan & Muat Ulang Chart</button>
+</div></div></div>
+
+<script>
+const rp=n=>Number(n||0).toLocaleString('id-ID');
+const promoModal={10000000:9669043.94815373,30000000:29004232.779941812,40000000:38672311.01764273,50000000:48340388.28876317,60000000:58006500};
+let currentBuy=0,currentSell=0;
+let lastPromoStatus='OFF',lastPromoOffAt=null,lastTitikOnPrice=null;
+
+function updateTitikOnState(){
+  const card=document.getElementById('titikOnCard');
+  const delta=document.getElementById('titikOnDelta');
+  const priceEl=document.getElementById('titikOn');
+  const quotesEl=document.querySelector('.quotes');
+  if(!card)return;
+
+  if(delta) delta.style.display = 'none';
+
+  if(lastPromoStatus==='ON'){
+    card.classList.remove('hidden');
+    card.classList.remove('on');
+    if(quotesEl)quotesEl.classList.remove('titik-hidden');
+    const displayVal=lastTitikOnPrice>0?lastTitikOnPrice:(currentBuy>0?currentBuy:0);
+    if(priceEl&&displayVal>0)priceEl.textContent=rp(displayVal);
+    if(window.updateTitikTeethColor)window.updateTitikTeethColor();
+    return;
+  }
+
+  // Status OFF: Tampil selama 30 menit setelah promo off, lalu hilang
+  if(!lastPromoOffAt){
+    card.classList.add('hidden');
+    card.classList.remove('on');
+    if(quotesEl)quotesEl.classList.add('titik-hidden');
+    return;
+  }
+
+  const offMs=new Date(lastPromoOffAt).getTime();
+  const elapsedMs=Date.now()-offMs;
+  const THIRTY_MINUTES_MS=30*60*1000;
+
+  if(elapsedMs<THIRTY_MINUTES_MS){
+    // Masih dalam 30 menit promo off: tetap tampil dengan border biasa
+    card.classList.remove('hidden');
+    card.classList.remove('on');
+    if(quotesEl)quotesEl.classList.remove('titik-hidden');
+    const displayVal=lastTitikOnPrice>0?lastTitikOnPrice:(currentBuy>0?currentBuy:0);
+    if(priceEl&&displayVal>0)priceEl.textContent=rp(displayVal);
+    if(window.updateTitikTeethColor)window.updateTitikTeethColor();
+  }else{
+    // Setelah 30 menit promo off: border titik hilang
+    card.classList.add('hidden');
+    card.classList.remove('on');
+    if(quotesEl)quotesEl.classList.add('titik-hidden');
+  }
+}
+setInterval(updateTitikOnState,1000);
+
+function clock(){const d=new Date();const t=new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Jakarta',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).format(d).split(':');hh.textContent=t[0];mm.textContent=t[1];ss.textContent=t[2];dateLabel.innerHTML=new Intl.DateTimeFormat('id-ID',{timeZone:'Asia/Jakarta',day:'2-digit',month:'short',year:'numeric'}).format(d).replace(/\./g,'')+'<br><span class=\"wib-line\">WIB</span>'}setInterval(clock,1000);clock();
+function signed(v){v=Number(v||0);return (v>0?'+':'')+rp(v)}
+function renderTiers(){if(!(currentBuy>0&&currentSell>0))return;const noms=[10000000,30000000,40000000,50000000,60000000];tiers.innerHTML=noms.map(n=>{const grams=n/currentBuy;const modal=promoModal[n];const titik=(n*currentSell)/modal;const plus=Math.round(grams*(titik-currentBuy));return `<div class="tier"><span class="nom">${n/1000000}JT</span><span class="gram">${grams.toFixed(4)} gr</span><span class="plus">${plus>=0?'+':'-'}Rp ${rp(Math.abs(plus))}</span></div>`}).join('');filterRenderedTiers()}
+function live(d){if(!d)return;const b=Number(d.buy_price??d.buy),se=Number(d.sell_price??d.sell);const serverDir=String(d.market_direction??d.buy_direction??'').toLowerCase();if(lastMoveBuy===null&&(serverDir==='up'||serverDir==='down'))setMarketDirection(serverDir,false);if(Number.isFinite(b)&&b>0){handleMove(b);currentBuy=b;buy.textContent=rp(b)}if(Number.isFinite(se)&&se>0){currentSell=se;sell.textContent=rp(se)}if(Number.isFinite(+d.buy_change))buyDelta.textContent=signed(d.buy_change);if(Number.isFinite(+d.sell_change))sellDelta.textContent=signed(d.sell_change);const u=Number(d.usdidr??d.usd_idr);if(Number.isFinite(u)&&u>0)usd.textContent=rp(u);if(Number.isFinite(+d.high))high.textContent=rp(d.high);if(Number.isFinite(+d.low))low.textContent=rp(d.low);if(currentBuy>0&&currentSell>0)spread.textContent=(((currentSell-currentBuy)/currentBuy)*100).toFixed(2)+'%';if(d.titik_on&&Number(d.titik_on)>0){lastTitikOnPrice=Number(d.titik_on)}if(d.promo_off_at){lastPromoOffAt=d.promo_off_at}if(d.promo_status||d.promo!==undefined){lastPromoStatus=String(d.promo_status||(d.promo?'ON':'OFF')).toUpperCase()}updateTitikOnState();renderTiers()}
+function promoData(d){if(!d)return;const st=String(d.status??(d.promo_on===true?'ON':d.promo_on===false?'OFF':'UNKNOWN')).toUpperCase();if(window.treasurySoundPromo)window.treasurySoundPromo(st);promo.textContent=st==='ON'?'ON':st==='OFF'?'OFF':'UNKNOWN';promo.classList.toggle('on',st==='ON');promo.classList.toggle('unknown',st!=='ON'&&st!=='OFF');if(Number.isFinite(+d.limit))limit.textContent=d.limit;else if(d.limit===null)limit.textContent='--';lastPromoStatus=st;if(d.promo_off_at)lastPromoOffAt=d.promo_off_at;else if(st==='OFF'&&!lastPromoOffAt)lastPromoOffAt=new Date().toISOString();const tVal=Number(d.titik_on??d.titikOn??0);if(tVal>0)lastTitikOnPrice=tVal;updateTitikOnState()}
+function markData(d){const el=document.getElementById('markMetric'),lab=document.getElementById('markLabel'),val=document.getElementById('markdown');if(!d||d.ok===false||!Number.isFinite(+d.amount)){lab.textContent='MARK';val.textContent='--';return}const state=String(d.state||'STABIL').toUpperCase();lab.textContent=state;const a=Number(d.amount);val.textContent=(a>0?'+':'')+rp(a);el.classList.toggle('sp',a>0)}
+let liveBusy=false;
+async function refreshLiveFast(){
+  if(liveBusy)return;
+  liveBusy=true;
+  try{
+    const r=await fetch('/api/live?t='+Date.now(),{
+      cache:'no-store',
+      headers:{'Cache-Control':'no-cache','Pragma':'no-cache'}
+    });
+    if(r.ok)live(await r.json());
+  }catch(e){}
+  finally{liveBusy=false}
+}
+async function refreshSlow(){
+  try{
+    let r=await fetch('/api/promo-live?t='+Date.now(),{cache:'no-store'});
+    if(r.ok)promoData(await r.json())
+  }catch(e){}
+  try{
+    let r=await fetch('/api/mark?t='+Date.now(),{cache:'no-store'});
+    if(r.ok)markData(await r.json())
+  }catch(e){}
+}
+refreshLiveFast();
+refreshSlow();
+
+setInterval(refreshLiveFast,500);
+setInterval(refreshSlow,3000);
+
+document.addEventListener('visibilitychange',()=>{
+  if(!document.hidden){refreshLiveFast();refreshSlow()}
+});
+window.addEventListener('focus',refreshLiveFast);
+
+try{
+  const es=new EventSource('/sse');
+  es.onopen=()=>console.log('SSE LIVE: CONNECTED');
+  es.onmessage=e=>{
+    try{
+      const d=JSON.parse(e.data);
+      if(d.type==='price')live(d);
+      if(d.type==='promo_status'||d.type==='promo')promoData(d)
+    }catch(_){}
+  };
+  es.onerror=()=>console.log('SSE LIVE: reconnecting...');
+}catch(_){}
+
+let lastMoveBuy=null,moveTimer=null,soundEnabled=localStorage.getItem('soundEnabled')!=='0';
+let visibleNominals=JSON.parse(localStorage.getItem('visibleNominals')||'[10,30,40,50,60]');
+let deferredInstallPrompt=null;
+const scaleCfg=Object.assign({global:100,nom:100,quote:100,box:100},JSON.parse(localStorage.getItem('scaleCfg')||'{}'));
+function openModal(id){document.getElementById(id)?.classList.add('open')}
+function closeModal(id){document.getElementById(id)?.classList.remove('open')}
+document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>closeModal(b.dataset.close));
+document.querySelectorAll('.modal-backdrop').forEach(b=>b.addEventListener('click',e=>{if(e.target===b)b.classList.remove('open')}));
+menuBtn.onclick=e=>{e.stopPropagation();mainMenu.classList.toggle('open')};document.addEventListener('click',e=>{if(!e.target.closest('.menu-wrap'))mainMenu.classList.remove('open')});
+settingBtn.onclick=()=>{mainMenu.classList.remove('open');openModal('settingModal')};appearanceOpen.onclick=()=>{closeModal('settingModal');openModal('appearanceModal')};nominalOpen.onclick=()=>{closeModal('settingModal');syncNomChecks();openModal('nominalModal')};
+themeBtn.onclick=()=>{document.body.classList.toggle('light');localStorage.setItem('lightMode',document.body.classList.contains('light')?'1':'0')};if(localStorage.getItem('lightMode')==='1')document.body.classList.add('light');
+soundBtn.onclick=()=>{soundEnabled=!soundEnabled;localStorage.setItem('soundEnabled',soundEnabled?'1':'0');soundText.textContent=soundEnabled?'Sound & Getar':'Sound & Getar (OFF)'};if(!soundEnabled)soundText.textContent='Sound & Getar (OFF)';
+logoutBtn.onclick=()=>{if(confirm('Logout dari dashboard?'))location.href='/logout'};
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstallPrompt=e});installBtn.onclick=async()=>{mainMenu.classList.remove('open');if(deferredInstallPrompt){deferredInstallPrompt.prompt();await deferredInstallPrompt.userChoice;deferredInstallPrompt=null}else alert('Install aplikasi tersedia jika website dibuka sebagai PWA/HTTPS dan browser mendukung instalasi.')};
+function applyScale(){document.querySelector('.summary').style.zoom=(scaleCfg.global/100);document.querySelectorAll('.nom,.gram,.plus').forEach(x=>x.style.fontSize=(17*scaleCfg.nom/100)+'px');document.querySelectorAll('.quote-main,.value,.delta').forEach(x=>x.style.fontSize=(20*scaleCfg.quote/100)+'px');document.querySelectorAll('.card').forEach(x=>{x.style.transform='scale('+(scaleCfg.box/100)+')';x.style.transformOrigin='center'});for(const k of ['global','nom','quote','box'])document.getElementById(k+'Val').textContent=scaleCfg[k]+'%';localStorage.setItem('scaleCfg',JSON.stringify(scaleCfg))}
+document.querySelectorAll('[data-step]').forEach(b=>b.onclick=()=>{const k=b.dataset.step;scaleCfg[k]=Math.max(60,Math.min(150,scaleCfg[k]+Number(b.dataset.dir)*5));applyScale()});document.querySelectorAll('[data-reset]').forEach(b=>b.onclick=()=>{scaleCfg[b.dataset.reset]=100;applyScale()});defaultAppearance.onclick=()=>{Object.assign(scaleCfg,{global:100,nom:100,quote:100,box:100});applyScale()};applyScale();
+function syncNomChecks(){document.querySelectorAll('.nom-check').forEach(c=>c.checked=visibleNominals.includes(Number(c.value)))}
+function filterRenderedTiers(){let shown=0;document.querySelectorAll('#tiers .tier').forEach(el=>{const n=parseInt(el.querySelector('.nom')?.textContent)||0;const yes=visibleNominals.includes(n);el.style.display=yes?'flex':'none';if(yes)shown++});tiers.classList.toggle('filtered',shown<5);if(shown<5){tiers.style.gridTemplateColumns='none'}else{tiers.style.gridTemplateColumns=''}}
+saveNominals.onclick=()=>{const arr=[...document.querySelectorAll('.nom-check:checked')].map(c=>Number(c.value));if(!arr.length){alert('Pilih minimal satu nominal.');return}visibleNominals=arr;localStorage.setItem('visibleNominals',JSON.stringify(arr));filterRenderedTiers();closeModal('nominalModal')};
+function setMarketDirection(dir,doFlash=true){if(dir!=='up'&&dir!=='down')return;document.body.classList.toggle('market-up',dir==='up');document.body.classList.toggle('market-down',dir==='down');if(doFlash)flashMove(dir)}
+function flashMove(dir){document.body.classList.remove('flash-up','flash-down');void document.body.offsetWidth;document.body.classList.add(dir==='up'?'flash-up':'flash-down');clearTimeout(moveTimer);moveTimer=setTimeout(()=>document.body.classList.remove('flash-up','flash-down'),1350);if(soundEnabled&&navigator.vibrate)navigator.vibrate([55,35,55])}
+function handleMove(newBuy){
+  if(!(newBuy>0))return;
+  if(lastMoveBuy!==null&&newBuy!==lastMoveBuy){
+    const diff=newBuy-lastMoveBuy;
+    setMarketDirection(diff>0?'up':'down',true);
+    if(window.treasurySoundMove)window.treasurySoundMove(diff);
+  }
+  lastMoveBuy=newBuy;
+}
+let activeImpactFilter = { low: true, medium: true, high: true };
+let lastNewsEvents = [];
+
+function setupNewsImpactFilterEvents() {
+  document.querySelectorAll('.impact-filter-pill[data-filter]').forEach(pill => {
+    pill.onclick = () => {
+      const f = pill.dataset.filter;
+      activeImpactFilter[f] = !activeImpactFilter[f];
+      pill.classList.toggle('active', activeImpactFilter[f]);
+      pill.classList.toggle('inactive', !activeImpactFilter[f]);
+      renderNewsEvents(lastNewsEvents);
+    };
+  });
+}
+
+function newsDayKey(x) {
+  const raw = x.date || x.datetime || x.time || '';
+  const d = raw ? new Date(raw) : null;
+  const now = new Date();
+  const isToday = d && (d.getDate() === now.getDate() && d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear());
+  const prefix = isToday ? 'HARI INI — ' : '';
+  if (d && !isNaN(d)) {
+    const weekday = new Intl.DateTimeFormat('id-ID', { timeZone: 'Asia/Jakarta', weekday: 'long' }).format(d);
+    const dateStr = new Intl.DateTimeFormat('id-ID', { timeZone: 'Asia/Jakarta', day: '2-digit', month: '2-digit', year: 'numeric' }).format(d);
+    return (prefix + weekday + ', ' + dateStr).toUpperCase();
+  }
+  return String(x.date_label || 'NEWS TERBARU').toUpperCase();
+}
+
+function numNews(v) {
+  if (v === null || v === undefined || v === '') return null;
+  const m = String(v).replace(/,/g, '').match(/-?\d+(?:\.\d+)?/);
+  return m ? Number(m[0]) : null;
+}
+
+function goldSignal(x) {
+  const title = String(x.title || '').toLowerCase();
+  const isSpeech = title.includes('speaks') || title.includes('speech') || title.includes('testifies');
+  if (isSpeech) return null;
+
+  const a = numNews(x.actual);
+  const f = numNews(x.forecast);
+  const p = numNews(x.previous);
+  const isUnemp = title.includes('unemployment') || title.includes('jobless') || title.includes('claims');
+
+  if (a !== null && f !== null) {
+    if (isUnemp) return a > f ? { label: 'Emas Naik', cls: 'up', icon: '⌃' } : { label: 'Emas Turun', cls: 'down', icon: '⌄' };
+    return a > f ? { label: 'Emas Turun', cls: 'down', icon: '⌄' } : { label: 'Emas Naik', cls: 'up', icon: '⌃' };
+  }
+  if (f !== null && p !== null) {
+    if (isUnemp) return f > p ? { label: 'Emas Naik', cls: 'up', icon: '⌃' } : { label: 'Emas Turun', cls: 'down', icon: '⌄' };
+    return f > p ? { label: 'Emas Turun', cls: 'down', icon: '⌄' } : { label: 'Emas Naik', cls: 'up', icon: '⌃' };
+  }
+  return null;
+}
+
+function countdownBadgeText(ts) {
+  const ms = Number(ts) - Date.now();
+  if (!Number.isFinite(ms)) return '';
+  if (ms <= 0) return '';
+  const totalSec = Math.floor(ms / 1000);
+  const days = Math.floor(totalSec / 86400);
+  const hours = Math.floor((totalSec % 86400) / 3600);
+  const mins = Math.floor((totalSec % 3600) / 60);
+
+  if (days > 0) return `${days} hari ${hours} jam lagi`;
+  if (hours > 0) return `${hours} jam ${mins} menit lagi`;
+  return `${Math.max(1, mins)} menit lagi`;
+}
+
+function renderNewsEvents(a) {
+  lastNewsEvents = a || [];
+  if (!a || !a.length) {
+    newsList.innerHTML = '<div style="color:#8b929c;text-align:center;padding:24px">Belum ada kalender USD yang dimuat.</div>';
+    return;
+  }
+
+  // Filter based on active pills
+  const filtered = a.filter(x => {
+    const imp = String(x.impact || 'low').toLowerCase();
+    if (imp === 'high') return activeImpactFilter.high;
+    if (imp === 'medium') return activeImpactFilter.medium;
+    return activeImpactFilter.low;
+  });
+
+  if (!filtered.length) {
+    newsList.innerHTML = '<div style="color:#8b929c;text-align:center;padding:24px">Tidak ada berita dengan filter dampak ini.</div>';
+    return;
+  }
+
+  const groups = {};
+  for (const x of filtered) {
+    const k = newsDayKey(x);
+    (groups[k] ??= []).push(x);
+  }
+
+  const now = Date.now();
+
+  newsList.innerHTML = Object.entries(groups).map(([dayLabel, items]) => {
+    const dayHeader = `<div class="news-day-header">
+      <i>📍</i>
+      <span>${dayLabel} (${items.length})</span>
+    </div>`;
+
+    const cardsHtml = items.map(x => {
+      const impact = String(x.impact || 'low').toLowerCase();
+      const ts = Number(x.ts) || (x.date ? new Date(x.date).getTime() : 0);
+      const isPast = ts > 0 && (now - ts > 10 * 60 * 1000);
+      const isUpcoming = ts > 0 && (ts >= now);
+      const cdStr = isUpcoming ? countdownBadgeText(ts) : '';
+
+      const tm = x.wib || x.time_wib || (ts > 0 ? new Intl.DateTimeFormat('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Jakarta' }).format(new Date(ts)).replace(/\./g, ':') : '19:30');
+      const dObj = ts > 0 ? new Date(ts) : new Date();
+      const dateWib = new Intl.DateTimeFormat('id-ID', { weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'Asia/Jakarta' }).format(dObj);
+
+      const sig = goldSignal(x);
+      const cardClass = isUpcoming ? 'news-card-item upcoming' : (isPast ? 'news-card-item past' : 'news-card-item');
+
+      let numbersRow = '';
+      if (x.forecast || x.previous || x.actual) {
+        const parts = [];
+        if (x.actual) parts.push(`Actual: <b>${x.actual}</b>`);
+        if (x.forecast) parts.push(`Forecast: <b>${x.forecast}</b>`);
+        if (x.previous) parts.push(`Prev: <b>${x.previous}</b>`);
+        numbersRow = `<div class="news-card-numbers">${parts.join('&nbsp;&nbsp;&nbsp;')}</div>`;
+      }
+
+      return `<div class="${cardClass}">
+        <div class="news-card-bars ${impact}">
+          <span></span><span></span><span></span>
+        </div>
+        <div class="news-card-content">
+          <div class="news-card-title-row">
+            <div class="news-card-title">${x.title || 'News Event'}</div>
+            ${sig ? `<div class="news-signal-pill ${sig.cls}"><span>${sig.icon}</span> ${sig.label}</div>` : ''}
+          </div>
+          <div class="news-card-meta">
+            <span>🕒 ${tm} WIB</span>
+            <span>📅 ${dateWib}</span>
+            ${cdStr ? `<span class="news-cd-badge">${cdStr}</span>` : ''}
+          </div>
+          ${numbersRow}
+        </div>
+      </div>`;
+    }).join('');
+
+    return dayHeader + cardsHtml;
+  }).join('');
+}
+
+setInterval(() => {
+  if (document.getElementById('newsModal')?.classList.contains('open') && lastNewsEvents.length) {
+    renderNewsEvents(lastNewsEvents);
+  }
+}, 30000);
+
+newsBtn.onclick = async () => {
+  openModal('newsModal');
+  setupNewsImpactFilterEvents();
+  newsCount.textContent = '0';
+  try {
+    const r = await fetch('/api/news?t=' + Date.now(), { cache: 'no-store' });
+    const d = await r.json();
+    renderNewsEvents(d.events || []);
+  } catch (e) {
+    newsList.innerHTML = '<div style="color:#ff676f;text-align:center;padding:24px">Gagal mengambil berita. Periksa koneksi internet.</div>';
+  }
+};
+
+calculatorBtn.onclick=()=>{calcBuy.textContent=currentBuy>0?rp(currentBuy):'-';calcSell.textContent=currentSell>0?rp(currentSell):'-';openModal('calculatorModal');calcNow()};
+let calcMode='money';document.querySelectorAll('[data-calc-mode]').forEach(b=>b.onclick=()=>{calcMode=b.dataset.calcMode;document.querySelectorAll('[data-calc-mode]').forEach(x=>x.classList.toggle('active',x===b));calcInputLabel.textContent=calcMode==='money'?'Jumlah Uang (Rp)':'Jumlah Gram';calcInput.placeholder=calcMode==='money'?'Contoh: 10000000':'Contoh: 1.25';calcNow()});function calcNow(){const v=Number(String(calcInput.value).replace(/[^0-9.]/g,''))||0;if(calcMode==='money'){calcResultLabel.textContent='Hasil Gram';calcResult.textContent=currentBuy>0?(v/currentBuy).toFixed(4)+' gr':'0.0000 gr'}else{calcResultLabel.textContent='Hasil Uang';calcResult.textContent='Rp '+rp(v*currentSell)}}calcInput.addEventListener('input',calcNow);
+const indicatorDefaults=['ma','bb','vwap'];let selectedIndicators=JSON.parse(localStorage.getItem('selectedIndicators')||JSON.stringify(indicatorDefaults));function syncIndicators(){document.querySelectorAll('.indicator-check').forEach(c=>c.checked=selectedIndicators.includes(c.value))}indicatorBtn.onclick=()=>{syncIndicators();openModal('indicatorModal')};saveIndicators.onclick=()=>{selectedIndicators=[...document.querySelectorAll('.indicator-check:checked')].map(x=>x.value);localStorage.setItem('selectedIndicators',JSON.stringify(selectedIndicators));closeModal('indicatorModal');location.reload()};
+promoBtn.onclick=async()=>{openModal('promoModal');try{const a=await fetch('/api/promo-live?t='+Date.now(),{cache:'no-store'}).then(r=>r.json());const st=String(a.status||'UNKNOWN').toUpperCase();promoModalStatus.textContent=st;promoModalStatus.classList.toggle('on',st==='ON');promoModalStatus.classList.toggle('unknown',st!=='ON'&&st!=='OFF');promoModalStatus.classList.toggle('off',st==='OFF');promoModalLimit.textContent=a.limit!=null?a.limit+' beli/bln':'--'}catch(e){promoModalStatus.textContent='UNKNOWN';promoModalLimit.textContent='--'}};
+async function pollNewsCount(){try{const d=await fetch('/api/news?t='+Date.now(),{cache:'no-store'}).then(r=>r.json());newsCount.textContent=Math.min(9,(d.events||[]).length)}catch(e){}}pollNewsCount();setInterval(pollNewsCount,15*60*1000);
+
+const studyMap={ma:'MASimple@tv-basicstudies',ema:'MAExp@tv-basicstudies',bb:'BB@tv-basicstudies',vwap:'VWAP@tv-basicstudies',rsi:'RSI@tv-basicstudies'};const tvStudies=[...new Set(['BB@tv-basicstudies',...(JSON.parse(localStorage.getItem('selectedIndicators')||'[]')).map(k=>studyMap[k]).filter(Boolean)])];const box=document.getElementById('tv');const holder=document.createElement('div');holder.className='tradingview-widget-container';holder.style.height='100%';holder.innerHTML='<div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div>';const sc=document.createElement('script');sc.src='https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';sc.async=true;sc.innerHTML=JSON.stringify({autosize:true,symbol:'TVC:GOLD',interval:'1',timezone:'Asia/Jakarta',theme:'dark',style:'1',locale:'id',backgroundColor:'rgba(13,17,23,1)',gridColor:'rgba(34,40,49,1)',hide_side_toolbar:false,allow_symbol_change:true,save_image:true,calendar:false,studies:tvStudies,support_host:'https://www.tradingview.com'});holder.appendChild(sc);box.appendChild(holder);
+</script>
+
+<style id="v6-border-behavior">
+html.market-up{--market-direction-color:#20df7f}
+html.market-down{--market-direction-color:#ff4655}
+html.market-up .board,html.market-up .tier,html.market-up .clock,html.market-up .hlb,html.market-up .metric{border-color:#20df7f !important}
+html.market-down .board,html.market-down .tier,html.market-down .clock,html.market-down .hlb,html.market-down .metric{border-color:#ff4655 !important}
+.card.buy,html.market-up .card.buy,html.market-down .card.buy{border-color:#2b3036 !important;border-top-color:#20df7f !important}
+.card.sell,html.market-up .card.sell,html.market-down .card.sell{border-color:#2b3036 !important;border-top-color:#4ba3ff !important}
+.card.usd,html.market-up .card.usd,html.market-down .card.usd{border-color:#2b3036 !important;border-top-color:#d55cff !important}
+@keyframes v6FlashUp{0%,100%{box-shadow:none}20%,55%{border-color:#20df7f;box-shadow:0 0 13px rgba(32,223,127,.95),inset 0 0 8px rgba(32,223,127,.12)}}
+@keyframes v6FlashDown{0%,100%{box-shadow:none}20%,55%{border-color:#ff4655;box-shadow:0 0 13px rgba(255,70,85,.95),inset 0 0 8px rgba(255,70,85,.12)}}
+html.flash-up .board,html.flash-up .card,html.flash-up .tier,html.flash-up .clock,html.flash-up .hlb,html.flash-up .metric{animation:v6FlashUp .8s ease-in-out 1 !important}
+html.flash-down .board,html.flash-down .card,html.flash-down .tier,html.flash-down .clock,html.flash-down .hlb,html.flash-down .metric{animation:v6FlashDown .8s ease-in-out 1 !important}
+html.flash-up .card.buy,html.flash-up .card.sell,html.flash-up .card.usd{border-color:#20df7f !important}
+html.flash-down .card.buy,html.flash-down .card.sell,html.flash-down .card.usd{border-color:#ff4655 !important}
+</style>
+<script id="v6-market-direction">
+(function(){
+  let lastBuy = null;
+  function applyDirection(nextBuy){
+    nextBuy = Number(nextBuy);
+    if(!Number.isFinite(nextBuy) || nextBuy <= 0) return;
+    if(lastBuy !== null && nextBuy !== lastBuy){
+      const up = nextBuy > lastBuy;
+      const root = document.documentElement;
+      root.classList.remove('market-up','market-down','flash-up','flash-down');
+      root.classList.add(up ? 'market-up' : 'market-down');
+      void root.offsetWidth;
+      root.classList.add(up ? 'flash-up' : 'flash-down');
+      setTimeout(()=>root.classList.remove('flash-up','flash-down'), 850);
+    }
+    lastBuy = nextBuy;
+  }
+  const originalFetch = window.fetch;
+  window.fetch = async function(){
+    const res = await originalFetch.apply(this, arguments);
+    try{
+      const u = String(arguments[0] || '');
+      if(u.includes('/api/live')){
+        const clone = res.clone();
+        clone.json().then(d=>applyDirection(d.buy_price ?? d.buy)).catch(()=>{});
+      }
+    }catch(_){}
+    return res;
+  };
+  const NativeES = window.EventSource;
+  if(NativeES){
+    window.EventSource = function(url, cfg){
+      const es = new NativeES(url, cfg);
+      es.addEventListener('message', function(e){
+        try{
+          const d=JSON.parse(e.data);
+          if(d && d.type==='price') applyDirection(d.buy_price ?? d.buy);
+        }catch(_){}
+      });
+      return es;
+    };
+    window.EventSource.prototype = NativeES.prototype;
+  }
+})();
+</script>
+
+<style id="v7-final-overrides">
+.limit-metric,#markMetric,html.market-up .limit-metric,html.market-down .limit-metric,html.market-up #markMetric,html.market-down #markMetric,html.flash-up .limit-metric,html.flash-down .limit-metric,html.flash-up #markMetric,html.flash-down #markMetric {
+  border-color:#e75cff !important;border-left-color:#e75cff !important;box-shadow:0 0 8px rgba(231,92,255,.18) !important;animation:none !important;
+}
+.limit-metric b,#markMetric b {color:#e75cff !important}
+@keyframes secondHeartbeat {
+  0%,100% { transform:scale(1); opacity:.62; text-shadow:none; }
+  12% { transform:scale(1.32); opacity:1; text-shadow:0 0 8px currentColor; }
+  24% { transform:scale(.94); opacity:.72; }
+  36% { transform:scale(1.22); opacity:1; text-shadow:0 0 7px currentColor; }
+  52% { transform:scale(1); opacity:.72; text-shadow:none; }
+}
+.time .sep-second {
+  display:inline-block;transform-origin:center;color:#ff4559;animation:secondHeartbeat 1s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .time .sep-second { animation:none; opacity:1; }
+}
+</style>
+
+<script id="v9-dynamic-mark">
+(function(){
+  function idrInt(n){
+    n = Number(n);
+    if(!Number.isFinite(n)) return '--';
+    return Math.abs(Math.round(n)).toLocaleString('id-ID');
+  }
+  window.renderDynamicMark = function(raw){
+    const n = Number(raw);
+    const box = document.getElementById('markMetric');
+    if(!box) return;
+    const label = box.querySelector('.metric-label') || box.firstElementChild;
+    const val = box.querySelector('b') || box.lastElementChild;
+    if(!Number.isFinite(n)){
+      if(label) label.textContent='MARK';
+      if(val) val.textContent='--';
+      return;
+    }
+    if(n < 0){
+      if(label) label.textContent='MARKDOWN';
+      if(val) val.textContent='-'+idrInt(n);
+    } else if(n > 0){
+      if(label) label.textContent='MARKUP';
+      if(val) val.textContent='+'+idrInt(n);
+    } else {
+      if(label) label.textContent='STABIL';
+      if(val) val.textContent='0';
+    }
+  };
+  async function refreshMarkV9(){
+    try{
+      const r=await fetch('/api/mark?t='+Date.now(),{cache:'no-store'});
+      if(!r.ok) return;
+      const d=await r.json();
+      const raw = d.mark ?? d.value ?? d.amount ?? d.markdown ?? d.markup;
+      renderDynamicMark(raw);
+    }catch(_){}
+  }
+  refreshMarkV9();
+  setInterval(refreshMarkV9, 60000);
+})();
+</script>
+
+<style id="v10-quote-border-direction">
+html.market-up .card.buy,html.market-up .card.sell,html.market-up .card.usd{border-left-color:#20df7f !important;border-right-color:#20df7f !important;border-bottom-color:#20df7f !important}
+html.market-down .card.buy,html.market-down .card.sell,html.market-down .card.usd{border-left-color:#ff4655 !important;border-right-color:#ff4655 !important;border-bottom-color:#ff4655 !important}
+.card.buy,html.market-up .card.buy,html.market-down .card.buy{border-top-color:#20df7f !important}
+.card.sell,html.market-up .card.sell,html.market-down .card.sell{border-top-color:#4ba3ff !important}
+.card.usd,html.market-up .card.usd,html.market-down .card.usd{border-top-color:#d55cff !important}
+html.flash-up .card.buy,html.flash-up .card.sell,html.flash-up .card.usd{border-color:#20df7f !important}
+html.flash-down .card.buy,html.flash-down .card.sell,html.flash-down .card.usd{border-color:#ff4655 !important}
+</style>
+
+<script id="v11-real-mark-formula">
+(function(){
+  const TROY = 31.1035;
+  let state = { sell:null, usdIdr:null, xauUsd:null, minMargin:0, maxMargin:0 };
+  function num(v){
+    if(v===null || v===undefined || v==='') return null;
+    if(typeof v === 'string') v = v.replace(/\s/g,'').replace(/,/g,'');
+    const n = Number(v);
+    return Number.isFinite(n) ? n : null;
+  }
+  function idr(n){ return Math.abs(Math.round(n)).toLocaleString('id-ID'); }
+  function findMarkBox(){
+    return document.getElementById('markMetric') || document.querySelector('.metric.mark') || document.querySelector('[data-metric="mark"]');
+  }
+  function render(){
+    const sell=num(state.sell), usd=num(state.usdIdr), xau=num(state.xauUsd);
+    const box=findMarkBox();
+    if(!box) return;
+    let label=box.querySelector('.metric-label');
+    let value=box.querySelector('b');
+    if(!label){ const kids=[...box.children]; label=kids[0] || null; }
+    if(!value){ const kids=[...box.children]; value=kids[kids.length-1] || null; }
+    if(!(sell>0 && usd>0 && xau>0)){
+      if(label) label.textContent='MARK';
+      if(value) value.textContent='--';
+      return;
+    }
+    const base=(xau*usd)/TROY;
+    const lower=base*(1+(num(state.minMargin) || 0)/100);
+    const upper=base*(1+(num(state.maxMargin) || 0)/100);
+    const diff = sell > upper ? Math.round(sell-upper) : Math.round(sell-lower);
+    if(label) label.textContent = diff>0 ? 'MARKUP' : diff<0 ? 'MARKDOWN' : 'STABIL';
+    if(value) value.textContent = (diff>0?'+':diff<0?'-':'') + idr(diff);
+  }
+  function ingest(d){
+    if(!d || typeof d!=='object') return;
+    const sell = num(d.sell_price ?? d.sell ?? d.selling_rate);
+    const usd  = num(d.usdidr ?? d.usd_idr ?? d.usdIdr);
+    const xau  = num(d.xauUsd ?? d.xau_usd ?? d.xau ?? d.xauusd);
+    if(sell>0) state.sell=sell;
+    if(usd>0) state.usdIdr=usd;
+    if(xau>0) state.xauUsd=xau;
+    render();
+  }
+  async function pull(){
+    const urls=['/api/live','/api/market','/api/xau','/api/markup-settings'];
+    for(const u of urls){
+      try{
+        const r=await fetch(u+'?t='+Date.now(),{cache:'no-store'});
+        if(!r.ok) continue;
+        const d=await r.json();
+        ingest(d);
+        if(d && d.settings){
+          const mn=num(d.settings.minMargin), mx=num(d.settings.maxMargin);
+          if(mn!==null) state.minMargin=mn;
+          if(mx!==null) state.maxMargin=mx;
+        }
+      }catch(_){}
+    }
+    render();
+  }
+  const nativeFetch=window.fetch;
+  window.fetch=async function(){
+    const res=await nativeFetch.apply(this,arguments);
+    try{
+      const url=String(arguments[0]||'');
+      if(/\/api\/(live|market|xau)/.test(url)){
+        res.clone().json().then(ingest).catch(()=>{});
+      }
+    }catch(_){}
+    return res;
+  };
+  pull();
+  setInterval(pull,60000);
+})();
+</script>
+
+<style id="v12-color-fixes">
+.plus.negative,.tier .plus.negative,.tier-value.negative,[data-tier-diff].negative{color:#ff5b67 !important;background:#3a151a !important;border-color:#7d2830 !important}
+.plus.positive,.tier .plus.positive,.tier-value.positive,[data-tier-diff].positive{color:#39df8b !important;background:#103a27 !important}
+.hlb.low,#lowBox,.low-box,.metric.low,[data-metric="low"]{border-color:#ff4655 !important;border-left-color:#ff4655 !important;box-shadow:0 0 6px rgba(255,70,85,.12) !important}
+</style>
+
+<script id="v12-tier-sign-color">
+(function(){
+  function colorTierSigns(){
+    document.querySelectorAll('.tier .plus, .tier-value, [data-tier-diff]').forEach(el=>{
+      const txt=(el.textContent||'').trim();
+      el.classList.remove('positive','negative');
+      if(/^-\s*Rp/i.test(txt) || /^-/.test(txt)) el.classList.add('negative');
+      else if(/^\+\s*Rp/i.test(txt) || /^\+/.test(txt)) el.classList.add('positive');
+    });
+  }
+  colorTierSigns();
+  const obs=new MutationObserver(colorTierSigns);
+  obs.observe(document.body,{subtree:true,childList:true,characterData:true});
+})();
+</script>
+
+<script id="v13-mark-last-known">
+(function(){
+  const KEY='treasury_last_mark_v13';
+  function markBox(){
+    return document.getElementById('markMetric') || document.querySelector('.metric.mark') || document.querySelector('[data-metric="mark"]');
+  }
+  function paint(label,value){
+    const box=markBox(); if(!box) return;
+    let l=box.querySelector('.metric-label') || box.firstElementChild;
+    let v=box.querySelector('b') || box.lastElementChild;
+    if(l) l.textContent=label;
+    if(v) v.textContent=value;
+  }
+  function restore(){
+    try{ const d=JSON.parse(localStorage.getItem(KEY)||'null'); if(d && d.label && d.value) paint(d.label,d.value); }catch(_){}
+  }
+  function saveCurrent(){
+    const box=markBox(); if(!box) return;
+    let l=box.querySelector('.metric-label') || box.firstElementChild;
+    let v=box.querySelector('b') || box.lastElementChild;
+    const label=(l?.textContent||'').trim(), value=(v?.textContent||'').trim();
+    if(/^(MARKUP|MARKDOWN|STABIL)$/i.test(label) && value && value!=='--'){
+      try{ localStorage.setItem(KEY,JSON.stringify({label,value,ts:Date.now()})); }catch(_){}
+    }
+  }
+  restore();
+  const observer=new MutationObserver(()=>{
+    const box=markBox(); if(!box) return;
+    let l=box.querySelector('.metric-label') || box.firstElementChild;
+    let v=box.querySelector('b') || box.lastElementChild;
+    const label=(l?.textContent||'').trim(), value=(v?.textContent||'').trim();
+    if(value==='--' || label==='MARK'){
+      try{ const d=JSON.parse(localStorage.getItem(KEY)||'null'); if(d && d.label && d.value){ paint(d.label,d.value); return; } }catch(_){}
+    }
+    saveCurrent();
+  });
+  observer.observe(document.body,{subtree:true,childList:true,characterData:true});
+  setInterval(saveCurrent,1000);
+})();
+</script>
+
+<script id="v14-authoritative-mark">
+(function(){
+  const KEY="treasury_authoritative_mark_v14";
+  function box(){
+    return document.getElementById("markMetric") || document.querySelector(".metric.mark") || document.querySelector('[data-metric="mark"]');
+  }
+  function render(state,amount){
+    const b=box(); if(!b) return;
+    const label=b.querySelector(".metric-label") || b.firstElementChild;
+    const value=b.querySelector("b") || b.lastElementChild;
+    state=String(state||"").toUpperCase();
+    const n=Number(amount);
+    if(!["MARKUP","MARKDOWN","STABIL"].includes(state) || !Number.isFinite(n)) return;
+    if(label) label.textContent=state;
+    if(value){
+      const sign=state==="MARKDOWN"?"-":state==="MARKUP"?"+":"";
+      value.textContent=sign+Math.abs(Math.round(n)).toLocaleString("id-ID");
+    }
+    localStorage.setItem(KEY,JSON.stringify({state,amount:Math.abs(n),ts:Date.now()}));
+  }
+  function restore(){
+    try{ const d=JSON.parse(localStorage.getItem(KEY)||"null"); if(d) render(d.state,d.amount); }catch(_){}
+  }
+  async function pull(){
+    try{
+      const r=await fetch("/api/mark-calculated",{cache:"no-store"});
+      if(!r.ok) throw new Error("HTTP "+r.status);
+      const d=await r.json();
+      const raw=d.amount ?? d.value ?? d.mark;
+      let state=String(d.state||"").toUpperCase();
+      let n=Number(raw);
+      if(Number.isFinite(n) && !["MARKUP","MARKDOWN","STABIL"].includes(state)){
+        state=n>0?"MARKUP":n<0?"MARKDOWN":"STABIL";
+      }
+      if(Number.isFinite(n)) render(state,Math.abs(n));
+    }catch(_){ restore(); }
+  }
+  restore();
+  pull();
+  setInterval(pull,60000);
+})();
+</script>
+
+<script id="v15-shared-tiers">
+(function(){
+  let lastTiers=[];
+  function paint(items){
+    if(!Array.isArray(items)||!items.length) return;
+    lastTiers=items;
+    const root=document.getElementById("tiers"); if(!root) return;
+    root.innerHTML=items.map(t=>{
+      const n=Number(t.nominal), g=Number(t.grams), d=Number(t.spread_rp);
+      const cls=d<0?"negative":"positive";
+      const sign=d>=0?"+":"-";
+      return `<div class="tier"><span class="nom">${n/1000000}JT</span><span class="gram">${g.toFixed(4)} gr</span><span class="plus ${cls}">${sign}Rp ${Math.abs(Math.round(d)).toLocaleString("id-ID")}</span></div>`;
+    }).join("");
+    if(typeof filterRenderedTiers==="function") filterRenderedTiers();
+  }
+  async function pull(){
+    try{
+      const r=await fetch("/api/tier-live?t="+Date.now(),{cache:"no-store"});
+      const d=await r.json();
+      if(d.success&&d.tiers?.length) paint(d.tiers);
+    }catch(_){ if(lastTiers.length) paint(lastTiers); }
+  }
+  window.addEventListener("load",()=>{
+    window.renderTiers=function(){ pull(); };
+    pull();
+    setInterval(pull,3000);
+  });
+})();
+</script>
+
+<div class="modal-backdrop" id="soundModal">
+ <div class="modal sound-panel">
+  <div class="modal-head"><span>‹ &nbsp; SOUND</span><button class="xbtn" data-close="soundModal">×</button></div>
+  <div class="modal-body">
+   <div class="sound-row"><div class="sound-ico">↟</div><div><div class="sound-name">Harga Naik</div><div class="sound-sub">Sound NAIK.m4a</div></div><input class="sw snd-toggle" data-key="priceUp" type="checkbox"></div>
+   <div class="sound-row"><div class="sound-ico">⇈</div><div><div class="sound-name">Naik Tinggi</div><div class="sound-sub">&gt; Rp 3.000 perubahan • sound NAIK</div></div><input class="sw snd-toggle" data-key="highUp" type="checkbox"></div>
+   <div class="sound-row"><div class="sound-ico down">↡</div><div><div class="sound-name">Harga Turun</div><div class="sound-sub">Sound Turun.m4a</div></div><input class="sw snd-toggle" data-key="priceDown" type="checkbox"></div>
+   <div class="sound-row"><div class="sound-ico down">⇊</div><div><div class="sound-name">Turun Tinggi</div><div class="sound-sub">&gt; Rp 3.000 perubahan • sound TURUN</div></div><input class="sw snd-toggle" data-key="highDown" type="checkbox"></div>
+   <div class="sound-row"><div class="sound-ico promo">▣</div><div><div class="sound-name">Promo ON/OFF</div><div class="sound-sub">Suara saat status promo berubah</div></div><input class="sw snd-toggle" data-key="promo" type="checkbox"></div>
+   <div class="sound-row"><div class="sound-ico tick">◷</div><div><div class="sound-name">Bunyi Hitung Mundur</div><div class="sound-sub">Bunyi detik jam pada 5 detik terakhir setiap menit</div></div><input class="sw snd-toggle" data-key="countdown" type="checkbox"></div>
+   <div class="sound-actions"><button id="soundAllOn">Nyalakan Semua</button><button id="soundAllOff">Matikan Semua</button></div>
+  </div>
+ </div>
+</div>
+
+<script id="v18-sound-engine">
+console.log("DASHBOARD VERSION: V43-FAST-LIVE");
+(()=>{
+ const DEF={priceUp:true,highUp:true,priceDown:true,highDown:true,promo:true,countdown:true};
+ let cfg={...DEF};try{cfg={...DEF,...JSON.parse(localStorage.getItem("treasurySoundV18")||"{}")}}catch(_){}
+ const save=()=>localStorage.setItem("treasurySoundV18",JSON.stringify(cfg));
+ const sync=()=>document.querySelectorAll(".snd-toggle").forEach(x=>x.checked=!!cfg[x.dataset.key]);
+ let audioCtx=null;
+ function ctx(){audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==="suspended")audioCtx.resume();return audioCtx}
+ function tick(){
+   try{const a=ctx(),o=a.createOscillator(),g=a.createGain();o.frequency.value=1150;g.gain.setValueAtTime(.12,a.currentTime);g.gain.exponentialRampToValueAtTime(.001,a.currentTime+.055);o.connect(g);g.connect(a.destination);o.start();o.stop(a.currentTime+.06)}catch(_){}
+ }
+ function speak(t){
+   if(!("speechSynthesis" in window))return;
+   speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang="id-ID";u.rate=1.05;u.pitch=1;speechSynthesis.speak(u);
+ }
+ const upAudio=new Audio();
+ const downAudio=new Audio();
+ upAudio.preload="auto";
+ downAudio.preload="auto";
+
+ let soundUnlocked=false;
+ async function unlockPriceSounds(){
+   if(soundUnlocked)return;
+   try{
+     upAudio.muted=true;
+     downAudio.muted=true;
+     await Promise.allSettled([upAudio.play(),downAudio.play()]);
+     upAudio.pause(); downAudio.pause();
+     upAudio.currentTime=0; downAudio.currentTime=0;
+     upAudio.muted=false; downAudio.muted=false;
+     soundUnlocked=true;
+   }catch(_){}
+ }
+ ["pointerdown","touchstart","keydown"].forEach(ev=>
+   window.addEventListener(ev,unlockPriceSounds,{once:true,passive:true})
+ );
+
+ function playPriceSound(audio){
+   try{
+     audio.pause();
+     audio.currentTime=0;
+     const p=audio.play();
+     if(p&&p.catch)p.catch(()=>{});
+   }catch(_){}
+ }
+
+ window.treasurySoundMove=(diff)=>{
+   diff=Number(diff)||0;
+   if(!diff)return;
+   if(diff>0){
+     if((Math.abs(diff)>3000&&cfg.highUp)||cfg.priceUp)playPriceSound(upAudio);
+   }else{
+     if((Math.abs(diff)>3000&&cfg.highDown)||cfg.priceDown)playPriceSound(downAudio);
+   }
+ };
+ let prevPromo=null;
+ window.treasurySoundPromo=(st)=>{
+   st=String(st||"").toUpperCase();if(!["ON","OFF"].includes(st))return;
+   if(prevPromo!==null&&prevPromo!==st&&cfg.promo)speak(st==="ON"?"Promo on":"Promo off");prevPromo=st;
+ };
+ let lastTick=-1;
+ setInterval(()=>{const d=new Date(),s=d.getSeconds();if(cfg.countdown&&s>=55&&s<=59&&s!==lastTick){tick();lastTick=s}if(s<55)lastTick=-1},100);
+ window.addEventListener("load",()=>{
+   sync();
+   document.querySelectorAll(".snd-toggle").forEach(x=>x.onchange=()=>{cfg[x.dataset.key]=x.checked;save()});
+   const on=document.getElementById("soundAllOn"),off=document.getElementById("soundAllOff");
+   if(on)on.onclick=()=>{Object.keys(cfg).forEach(k=>cfg[k]=true);save();sync()};
+   if(off)off.onclick=()=>{Object.keys(cfg).forEach(k=>cfg[k]=false);save();sync()};
+   const sb=document.getElementById("soundBtn");if(sb)sb.onclick=()=>{if(typeof openModal==="function")openModal("soundModal");sync();try{ctx()}catch(_){}};
+ });
+})();
+</script>
+
+<script id="v23-history-clean-engine">
+(()=>{
+  const fmt=n=>Math.round(Number(n)||0).toLocaleString("id-ID");
+  const cls=v=>v>0?"hist-up":v<0?"hist-down":"hist-flat";
+  const arrow=v=>v>0?"▲ +":v<0?"▼ -":"— ";
+
+  document.addEventListener("click",e=>{
+    const b=e.target.closest?.("[data-close]");
+    if(!b)return;
+    const el=document.getElementById(b.getAttribute("data-close"));
+    if(el){el.classList.remove("open");e.preventDefault();e.stopPropagation();}
+  });
+
+  function tierCell(row,nominal){
+    const t=Array.isArray(row?.tiers)
+      ? row.tiers.find(x=>Number(x.nominal)===Number(nominal))
+      : null;
+    if(!t) return '<div class="hist-tier">—</div>';
+    const g=Number(t.grams), d=Number(t.spread_rp);
+    if(!Number.isFinite(g)||!Number.isFinite(d)) return '<div class="hist-tier">—</div>';
+    const valueText=d>0
+      ? `📈 +Rp ${fmt(Math.abs(d))}`
+      : d<0
+        ? `📉 -Rp ${fmt(Math.abs(d))} ⚠️`
+        : `➖ Rp 0`;
+    return `<div class="hist-tier">
+      <span class="hist-tier-gram">${g.toFixed(4)}g</span>
+      <b class="${d>0?"pos":d<0?"neg":"zero"}">${valueText}</b>
+    </div>`;
+  }
+
+  function markCell(row){
+    const st=String(row?.mark_state||"").toUpperCase();
+    const amount=Number(row?.mark_amount);
+    if(!["MARKUP","MARKDOWN","STABIL"].includes(st)||!Number.isFinite(amount)){
+      return "CHECKING";
+    }
+    const sign=st==="MARKDOWN"?"-":st==="MARKUP"?"+":"";
+    const warn=st==="MARKDOWN"?"⚠ ":"";
+    return `${warn}${st} ${sign}${fmt(amount)}`;
+  }
+
+  async function render(){
+    const body=document.getElementById("historyBody");
+    const count=document.getElementById("historyCount");
+    if(!body)return;
+
+    try{
+      const r=await fetch("/api/history?limit=525&t="+Date.now(),{cache:"no-store"});
+      if(!r.ok) throw new Error("HTTP "+r.status);
+      const d=await r.json();
+      const items=Array.isArray(d?.items)?d.items:[];
+
+      if(count)count.textContent=`${Number(d?.count)||items.length} records`;
+
+      if(!items.length){
+        body.innerHTML='<tr><td colspan="11" style="text-align:center;color:#8b929c;padding:24px">Menunggu update harga berikutnya untuk membuat snapshot lengkap...</td></tr>';
+        return;
+      }
+
+      body.innerHTML=items.map(row=>{
+        const bc=Number(row.buy_change)||0;
+        const sc=Number(row.sell_change)||0;
+        const sp=Number(row.spread);
+        const usd=Number(row.usdIdr);
+
+        return `<tr>
+          <td class="history-time">${row.time||"—"}</td>
+          <td>
+            <div class="hist-price ${cls(bc)}"><span class="hist-rp">Rp</span>${fmt(row.buy)}</div>
+            <div class="hist-change ${cls(bc)}">${arrow(bc)}${fmt(Math.abs(bc))}</div>
+          </td>
+          <td>
+            <div class="hist-price ${cls(sc)}"><span class="hist-rp">Rp</span>${fmt(row.sell)}</div>
+            <div class="hist-change ${cls(sc)}">${arrow(sc)}${fmt(Math.abs(sc))}</div>
+          </td>
+          <td class="hist-spread">${Number.isFinite(sp)?sp.toFixed(2):"—"}%</td>
+          <td>${Number.isFinite(usd)?fmt(usd):"—"}</td>
+          <td><span class="hist-status">${markCell(row)}</span></td>
+          <td>${tierCell(row,10000000)}</td>
+          <td>${tierCell(row,30000000)}</td>
+          <td>${tierCell(row,40000000)}</td>
+          <td>${tierCell(row,50000000)}</td>
+          <td>${tierCell(row,60000000)}</td>
+        </tr>`;
+      }).join("");
+    }catch(e){
+      if(count)count.textContent="0 records";
+      body.innerHTML='<tr><td colspan="11" style="text-align:center;color:#ff676f;padding:24px">API riwayat belum siap. Restart server lalu tunggu update harga berikutnya.</td></tr>';
+    }
+  }
+
+  window.addEventListener("load",()=>{
+    render();
+    setInterval(render,5000);
+  });
+})();
+</script>
+
+<script id="v25-promo-static-engine">
+(()=>{
+  function mountStaticPromo(){
+    const staticHtml=document.getElementById("promoStaticContent");
+    if(!staticHtml) return;
+  }
+
+  document.addEventListener("click",async e=>{
+    const btn=e.target.closest?.(".promo-copy-btn");
+    if(!btn) return;
+    const code=btn.dataset.code||"";
+    try{
+      await navigator.clipboard.writeText(code);
+      const old=btn.textContent;
+      btn.textContent="✓ Tersalin";
+      setTimeout(()=>btn.textContent=old,1200);
+    }catch(_){
+      const ta=document.createElement("textarea");
+      ta.value=code;document.body.appendChild(ta);ta.select();
+      try{document.execCommand("copy")}catch(_){}
+      ta.remove();
+    }
+  });
+
+  window.addEventListener("load",()=>{
+    mountStaticPromo();
+    setTimeout(mountStaticPromo,500);
+  });
+})();
+</script>
+
+<script id="v40-account-auth-engine">
+(async()=>{
+  const gate=document.getElementById("authGate");
+  const msg=document.getElementById("authMsg");
+  const numberScreen=document.getElementById("numberScreen");
+  const pinScreen=document.getElementById("pinScreen");
+  const number=document.getElementById("authNumber");
+  const numberBtn=document.getElementById("authNumberBtn");
+  const pin=document.getElementById("authPin");
+  const pin2=document.getElementById("authPin2");
+  const pinBtn=document.getElementById("authPinBtn");
+  const verifyCode=document.getElementById("verifyCode");
+  const chatAdmin=document.getElementById("chatAdmin");
+  const dot1=document.getElementById("dot1");
+  const dot2=document.getElementById("dot2");
+  const dot3=document.getElementById("dot3");
+  const pinLabel=pin?.previousElementSibling;
+  const pin2Label=pin2?.previousElementSibling;
+
+  let mode="new";
+  let activeNumber="";
+  let requestId="";
+  let browserToken="";
+  let pollTimer=null;
+
+  function normalizeNumber(v){
+    let n=String(v||"").replace(/\D/g,"");
+    if(n.startsWith("0")) n="62"+n.slice(1);
+    else if(n.startsWith("8")) n="62"+n;
+    return n;
+  }
+
+  function show(t,ok=false){
+    msg.textContent=t||"";
+    msg.className="auth-msg"+(ok?" ok":"");
+  }
+
+  async function authJson(url,options={}){
+    const r=await fetch(url,options);
+    const raw=await r.text();
+    let d={};
+    try{ d=raw?JSON.parse(raw):{}; }
+    catch(_){ throw new Error(`Server auth belum aktif (${r.status}).`); }
+    if(!r.ok){
+      const e=new Error(d.error||`HTTP ${r.status}`);
+      e.code=d.error;
+      throw e;
+    }
+    return d;
+  }
+
+  function showPin(existing){
+    mode=existing?"login":"new";
+    numberScreen.classList.add("hidden");
+    pinScreen.classList.add("active");
+    dot1.classList.remove("active");
+    dot2.classList.add("active");
+
+    if(existing){
+      if(pinLabel) pinLabel.textContent="MASUKKAN PIN";
+      if(pin2Label) pin2Label.style.display="none";
+      pin2.style.display="none";
+      pin.placeholder="PIN akun";
+      pinBtn.textContent="Masuk ke Akun";
+      show("Nomor sudah terverifikasi. Masukkan PIN untuk masuk.",true);
+    }else{
+      if(pinLabel) pinLabel.textContent="BUAT PIN";
+      if(pin2Label) pin2Label.style.display="";
+      pin2.style.display="";
+      pin.placeholder="4–8 digit PIN";
+      pinBtn.textContent="Buat PIN & Verifikasi";
+      show("Buat PIN untuk pendaftaran pertama.");
+    }
+    pin.focus();
+  }
+
+  try{
+    const st=await authJson("/api/auth/status",{cache:"no-store"});
+    if(st.authenticated || st.enabled===false){
+      gate.classList.add("hidden");
+      return;
+    }
+  }catch(_){}
+
+  numberBtn.onclick=async()=>{
+    activeNumber=normalizeNumber(number.value);
+    if(!activeNumber){
+      show("Masukkan nomor WhatsApp.");
+      return;
+    }
+    numberBtn.disabled=true;
+    show("Mengecek akun...");
+    try{
+      const d=await authJson("/api/auth/check-number",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({number:activeNumber})
+      });
+      showPin(Boolean(d.registered));
+    }catch(e){
+      show(e.message||"Gagal mengecek akun");
+    }finally{
+      numberBtn.disabled=false;
+    }
+  };
+
+  function pollApproval(){
+    clearInterval(pollTimer);
+    pollTimer=setInterval(async()=>{
+      try{
+        const d=await authJson(`/api/auth/login-status?id=${encodeURIComponent(requestId)}&token=${encodeURIComponent(browserToken)}`,{cache:"no-store"});
+        if(d.status==="contacted"){
+          show("📨 Permintaan diterima. Menunggu ACC admin...",true);
+        }else if(d.status==="approved"){
+          clearInterval(pollTimer);
+          dot2.classList.remove("active");
+          dot3.classList.add("active");
+          show("✅ Akun disetujui. Membuka dashboard...",true);
+          setTimeout(()=>location.reload(),350);
+        }else if(d.status==="rejected"){
+          clearInterval(pollTimer);
+          pinBtn.disabled=false;
+          show("❌ Pendaftaran ditolak admin.");
+        }else if(d.status==="expired"){
+          clearInterval(pollTimer);
+          pinBtn.disabled=false;
+          show("Kode kedaluwarsa. Silakan ulangi pendaftaran.");
+        }
+      }catch(e){
+        if(e.code==="request_not_found"){
+          clearInterval(pollTimer);
+          show("Permintaan sudah selesai. Silakan masuk dengan nomor WhatsApp + PIN.",true);
+          pinBtn.disabled=false;
+          pinBtn.textContent="Masuk ke Akun";
+          mode="login";
+          if(pin2Label) pin2Label.style.display="none";
+          pin2.style.display="none";
+        }
+      }
+    },2000);
+  }
+
+  pinBtn.onclick=async()=>{
+    const p=String(pin.value||"").trim();
+
+    if(mode==="login"){
+      if(!p){ show("Masukkan PIN."); return; }
+      pinBtn.disabled=true;
+      show("Memverifikasi PIN...");
+      try{
+        await authJson("/api/auth/login",{
+          method:"POST",
+          headers:{"Content-Type":"application/json"},
+          body:JSON.stringify({number:activeNumber,pin:p})
+        });
+        show("✅ Login berhasil. Membuka dashboard...",true);
+        setTimeout(()=>location.reload(),300);
+      }catch(e){
+        show(e.code==="pin_invalid"?"PIN salah":e.code==="account_not_registered"?"Akun belum terverifikasi":e.message);
+        pinBtn.disabled=false;
+      }
+      return;
+    }
+
+    const p2=String(pin2.value||"").trim();
+    if(!/^\d{4,8}$/.test(p)){
+      show("PIN harus 4–8 digit angka.");
+      return;
+    }
+    if(p!==p2){
+      show("Ulangi PIN harus sama.");
+      return;
+    }
+
+    pinBtn.disabled=true;
+    show("Membuat permintaan verifikasi...");
+    try{
+      const rd=await authJson("/api/auth/register-number",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({number:activeNumber})
+      });
+
+      if(rd.registered){
+        mode="login";
+        pinBtn.textContent="Masuk ke Akun";
+        if(pin2Label) pin2Label.style.display="none";
+        pin2.style.display="none";
+        show("Akun sudah terverifikasi. Masukkan PIN untuk masuk.",true);
+        pinBtn.disabled=false;
+        return;
+      }
+
+      requestId=rd.request_id;
+      browserToken=rd.browser_token;
+
+      const pd=await authJson("/api/auth/create-pin",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+          request_id:requestId,
+          browser_token:browserToken,
+          pin:p
+        })
+      });
+
+      const waText=`Halo, saya ingin daftar akses Harga Treasury.
+
+Nomor WA saya: +${activeNumber}
+Kode verifikasi: ${requestId}
+
+Mohon verifikasi akun saya.`;
+
+      verifyCode.textContent=`KODE VERIFIKASI: ${requestId}`;
+      verifyCode.style.display="block";
+      chatAdmin.href=`https://wa.me/${encodeURIComponent(pd.admin_number||rd.admin_number)}?text=${encodeURIComponent(waText)}`;
+      chatAdmin.classList.remove("hidden");
+      pinBtn.textContent="Menunggu Verifikasi";
+      show("Klik Chat Admin, lalu tunggu persetujuan admin.",true);
+      pollApproval();
+    }catch(e){
+      show(e.message||"Gagal membuat permintaan");
+      pinBtn.disabled=false;
+    }
+  };
+})();
+</script>
+
+<script id="gold-live-tab-v616">
+(()=>{
+  let prev=null;
+  const fmt=n=>Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const pick=o=>{
+    const vals=[o?.xau_usd,o?.xauUsd,o?.xau,o?.gold,o?.price];
+    for(const v of vals){const n=Number(v);if(Number.isFinite(n)&&n>1000&&n<10000)return n}
+    return null;
+  };
+  async function tick(){
+    try{
+      const r=await fetch('/api/market?t='+Date.now(),{cache:'no-store'});
+      if(!r.ok)return;
+      const d=await r.json(), cur=pick(d);
+      if(cur==null)return;
+      if(prev==null){document.title='GOLD '+fmt(cur);prev=cur;return}
+      const diff=cur-prev, arrow=diff>0?'🔺':diff<0?'🔻':'➖', sign=diff>0?'+':'';
+      document.title=`GOLD ${fmt(cur)} ${arrow} ${sign}${fmt(diff)}`;
+      prev=cur;
+    }catch(e){}
+  }
+  tick(); setInterval(tick,60000);
+})();
+</script>
+
+<script id="v628-real-svg-live-border">
+addEventListener('DOMContentLoaded',()=>{
+  const UP='rgb(0,229,139)', DOWN='rgb(255,72,91)';
+  const buy=document.querySelector('.buy');
+  if(!buy)return;
+
+  let last=null;
+
+  function setHeaderBorder(color){
+    const candidates=[...document.querySelectorAll('header,.header,.hero,.board,.main,.dashboard,.wrap,.container')];
+    candidates.forEach(el=>{
+      const r=el.getBoundingClientRect();
+      if(r.width>window.innerWidth*.70){
+        const cs=getComputedStyle(el);
+        if(cs.borderTopStyle!=='none') el.style.borderTopColor=color;
+        if(cs.borderRightStyle!=='none') el.style.borderRightColor=color;
+        if(cs.borderBottomStyle!=='none') el.style.borderBottomColor=color;
+        if(cs.borderLeftStyle!=='none') el.style.borderLeftColor=color;
+      }
+    });
+  }
+
+  function readBuy(){
+    const raw=(buy.textContent||'').replace(/\s/g,'').replace(/Rp/ig,'').replace(/\./g,'').replace(',','.');
+    const m=raw.match(/(\d+(?:\.\d+)?)/);
+    const v=m?Number(m[1]):NaN;
+    if(!Number.isFinite(v))return;
+
+    if(last!==null && v!==last){
+      setHeaderBorder(v>last?UP:DOWN);
+    }
+    last=v;
+  }
+
+  readBuy();
+  new MutationObserver(readBuy).observe(buy,{
+    subtree:true,childList:true,characterData:true
+  });
+});
+</script>
+
+<script id="v-promo-token-connect">
+(function(){
+  const inp = document.getElementById('tsTokenInput');
+  const btn = document.getElementById('tsTokenSaveBtn');
+  const msg = document.getElementById('tsTokenMsg');
+  if(!btn || !inp) return;
+
+  fetch('/api/promo-session').then(r=>r.json()).then(d=>{
+    if(d.has_token && msg){
+      msg.textContent = '🟢 Terhubung: ' + d.preview + ' (Deteksi otomatis aktif)';
+      msg.style.color = '#39df8b';
+    }
+  }).catch(()=>{});
+
+  btn.onclick = async () => {
+    const val = (inp.value || '').trim();
+    if(!val) return;
+    btn.disabled = true;
+    btn.textContent = '...';
+    try {
+      const res = await fetch('/api/promo-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: val })
+      });
+      const data = await res.json();
+      if(data.success && msg){
+        msg.textContent = '🟢 Terhubung: ' + data.preview + ' (Deteksi otomatis aktif)';
+        msg.style.color = '#39df8b';
+        inp.value = '';
+      }
+    } catch (_) {
+      if(msg){
+        msg.textContent = 'Gagal menyimpan token.';
+        msg.style.color = '#ff6c74';
+      }
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Sambungkan';
+    }
+  };
+})();
+</script>
+</body></html>
